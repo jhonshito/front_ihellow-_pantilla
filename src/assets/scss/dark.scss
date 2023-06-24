@@ -1,0 +1,24 @@
+/*!
+* Version: 1.0.0
+* Qompac Ui
+* Author: iqonic.design
+* Design and Developed by: iqonic.design
+* NOTE: This file contains the styling for Template.
+*
+*/
+
+// Configuration
+@import "./bootstrap/functions";
+// Variables
+@import "./qompac-ui-design-system/variable";
+@import "./qompac-ui-design-system/variables/index";
+@import "./bootstrap/variables";
+
+@import "./bootstrap/mixins";
+
+// qompac-ui Design System Mixin And Helper
+@import "./qompac-ui-design-system/helper/functions";
+@import "./qompac-ui-design-system/helper/mixins";
+@import "./qompac-ui-design-system/helper/reboot";
+
+@import "./dark/index";

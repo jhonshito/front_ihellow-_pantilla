@@ -1,0 +1,25 @@
+
+.sales-chart-01{
+    min-height: 215px !important;
+}
+.sales-chart-02{
+    min-height: 295px !important;
+}
+
+.eccomerce-chart-01{
+min-height: 270px !important;
+}
+.analytics-chart-03{
+    min-height: 250px !important;
+}
+.analytics-chart-02{
+    min-height: 240px !important;
+}
+.eccomerce-chart-02{
+    min-height: 212px !important;
+}
+@include media-breakpoint-down(xl) {
+    .eccomerce-chart-01{
+        min-height: 270px !important;
+        }
+ }

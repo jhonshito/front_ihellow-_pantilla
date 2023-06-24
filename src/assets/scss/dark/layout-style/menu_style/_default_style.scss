@@ -1,0 +1,22 @@
+.sidebar{
+    &.sidebar-default{
+        .nav-link{
+            &:not(.static-item){
+                &:hover{
+                    &:not(.active){
+                        &:not([aria-expanded=true]){
+                            background-color: rgba(var(--#{$variable-prefix}primary-rgb), .2);
+                            color: $white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 991px){
+    .horizontal-nav.mobile-offcanvas .nav-link {
+        color: $white;
+    }
+}

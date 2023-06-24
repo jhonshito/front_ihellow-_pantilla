@@ -1,0 +1,20 @@
+// Main
+
+$body-bg:#0E121B;
+$body-color: #fafafa;
+$card-bg: #161D2B;
+$border-color:#383838;
+$secondary: #E9ECEF;
+$dark: #60658a;
+$heading-color:#e3e7ef;
+$light:#cdcdcd;
+$grid-table-color:#b3b3b3;
+$theme-colors: map-merge($theme-colors,
+  (
+    "secondary": $secondary,
+  )
+);
+
+$alert-bg-scale: 60%;
+$alert-border-scale: 0%;
+$alert-color-scale: 80%;
