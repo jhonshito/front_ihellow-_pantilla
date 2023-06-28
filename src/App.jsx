@@ -22,12 +22,12 @@ import store from "./app/store";
 import Register from "./components/Register";
 import Data from "./components/Data";
 import Tarjeta from "./components/Tarjeta";
-import Index from "./components/Index";
+// import Index from "./components/Index";
 import Confirmacion from "./components/auth/Confirmacion";
 import Empresario from "./components/empresario/Empresario";
 import React, { useEffect, useState } from "react";
-import DataEmpresario from "./components/empresario/DataEmpresario";
-import CardEmpresario from "./components/empresario/CardEmpresario";
+// import DataEmpresario from "./components/empresario/DataEmpresario";
+// import CardEmpresario from "./components/empresario/CardEmpresario";
 import Perfil from "./components/auth/Perfil";
 import Landing from "./components/Landing";
 import DataFilter from "./components/emprendedor/DataFilter";
@@ -60,12 +60,12 @@ function App() {
                 role?.role ? (
                   <>
                     <Route path="/home" element={<Empresario setIdLanding={setIdLanding} setFecha={setFecha} />} >
-                      <Route path="/home/dataEmpresario" element={<DataEmpresario idLanding={idLanding} fecha={fecha} />} />
+                      <Route path="/home/dataEmpresario" element={<Data idLanding={idLanding} fechaFiltro={fecha} />} />
                     </Route>
                   </>
                 ): (
                     <Route path="/home" element={<DataFilter setDataFecha={setDataFecha} />} >
-                      <Route path="/home/data" element={<Data dataFecha={dataFecha} />} />
+                      <Route path="/home/data" element={<Data fechaFiltro={dataFecha} />} />
                     </Route>
                 )
               }

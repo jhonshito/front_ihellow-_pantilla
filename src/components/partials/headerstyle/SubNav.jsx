@@ -22,12 +22,20 @@ import {
   theme_scheme_direction,
 } from "../../../store/setting/actions";
 
+import { useFind_userQuery } from "../../../api/apiSplice";
+import { useGetLocalStorange } from "../../hooks/sendLocalstorange";
+import Loader from "../../loading/Loader";
+
 const SubNav = () => {
+
+  const { data, isLoading, error } = useFind_userQuery({id: useGetLocalStorange('data')?.id});
 
   const [datos, setDatos] = useState();
 
     const dispatch = useDispatch();
-    dispatch(setSetting());
+    useEffect(() => {
+      dispatch(setSetting());
+    }, []);
     const [show, setShow] = useState(false);
     const [show1, setShow1] = useState(false);
     //fullscreen
@@ -69,13 +77,13 @@ const SubNav = () => {
   const handleValidacion = () => {
     localStorage.removeItem('data');
     localStorage.removeItem('idLanding');
-    const local = JSON.parse(localStorage.getItem('data'));
+    const local = useGetLocalStorange('data');
     if(!local) return navigate('/')
     return navigate('/home')
   }
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('data'));
+    const user = useGetLocalStorange('data');
     if(user){
       setDatos(user);
     }
@@ -97,6 +105,11 @@ const SubNav = () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  if(error){
+    return <div>{error.message}</div>
+  }
+
 
   return (
     <Fragment>
@@ -358,28 +371,32 @@ const SubNav = () => {
             </Nav.Link>
           </Nav.Item>
 
-          <Dropdown as="li" className="nav-item iq-tour ps-3 ps-lg-0">
-            <Dropdown.Toggle
-              as={CustomToggle}
-              variant="py-0  d-flex align-items-center nav-link"
-            >
-              <img
-                src={datos?.img || avatar1}
-                alt="User-Profile"
-                className="theme-color-img img-fluid avatar avatar-50 avatar-rounded"
-                loading="lazy"
-              />
-              <div className="caption ms-3 d-none d-md-block ">
-                <h6 className="mb-0 caption-title">{datos?.names}</h6>
-                <p className="mb-0 caption-sub-title text-capitalize">
-                {datos?.role ? datos?.name_company: 'Marketing'} {datos?.role ? 'Company': 'Client'}
-                </p>
-              </div>
-            </Dropdown.Toggle>
-            <Dropdown.Menu variant="end">
-              <Dropdown.Item onClick={handleValidacion} >Logout</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          {
+            isLoading ? <p>Loading</p>:
+            <Dropdown as="li" className="nav-item iq-tour ps-3 ps-lg-0">
+              <Dropdown.Toggle
+                as={CustomToggle}
+                variant="py-0  d-flex align-items-center nav-link"
+              >
+                <img
+                  src={data?.data?.logo == 'userdemo.png' ? avatar1 : data?.data?.logo}
+                  alt="User-Profile"
+                  className="theme-color-img img-fluid avatar avatar-50 avatar-rounded"
+                  loading="lazy"
+                />
+                <div className="caption ms-3 d-none d-md-block ">
+                  <h6 className="mb-0 caption-title">{data?.data?.names}</h6>
+                  <p className="mb-0 caption-sub-title text-capitalize">
+                  {data?.data?.role ? datos?.name_company: 'Marketing'} {data?.data?.role ? 'Company': 'Client'}
+                  </p>
+                </div>
+              </Dropdown.Toggle>
+              <Dropdown.Menu variant="end">
+                <Dropdown.Item onClick={handleValidacion} >Logout</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          }
+
         </ul>
       </div>
     </Fragment>

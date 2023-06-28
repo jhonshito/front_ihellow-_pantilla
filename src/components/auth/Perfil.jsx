@@ -12,12 +12,15 @@ import { MdOutlineAddAPhoto } from "react-icons/md";
 
 
 import avatar1 from "../../assets/images/avatars/01.png";
-import { useAdd_photoMutation } from "../../api/apiSplice";
+import { useAdd_photoMutation, useFind_userQuery } from "../../api/apiSplice";
+import { useGetLocalStorange } from "../hooks/sendLocalstorange";
+import Loader from "../loading/Loader";
 
 const Perfil = () => {
 
   const [datos, setDatos] = useState();
-  const [add_photo] = useAdd_photoMutation()
+  const [add_photo] = useAdd_photoMutation();
+  const { data, isLoading, error } = useFind_userQuery({id: useGetLocalStorange('data')?.id});
 
   const fileInputRef = useRef(null);
 
@@ -30,7 +33,7 @@ const Perfil = () => {
     const formData = new FormData();
     formData.append('file', file);
     console.log(file)
-    const datos = JSON.parse(localStorage.getItem('data'))
+    const datos = useGetLocalStorange('data');
 
     try {
       const res = await add_photo({id: datos.id, formData});
@@ -42,12 +45,22 @@ const Perfil = () => {
   };
 
     useEffect(() => {
-      const user = JSON.parse(localStorage.getItem('data'));
+      // const user = JSON.parse(localStorage.getItem('data'));
+      const user = useGetLocalStorange('data');
       if(user){
         setDatos(user);
       }
     
     }, []);
+
+    if(error){
+      return <div>{error.message}</div>
+    }
+
+    if(isLoading){
+      return <Loader />
+    }
+
   return (
     <Fragment>
       <Tab.Container defaultActiveKey="first">
@@ -60,13 +73,13 @@ const Perfil = () => {
                     <div className="profile-img position-relative me-3 mb-3 mb-lg-0 profile-logo profile-logo1">
                       <Image
                         className="theme-color-default-img  img-fluid rounded-pill avatar-100"
-                        src={datos?.img || avatar1}
+                        src={data?.data?.logo == 'userdemo.png' ? avatar1 : data?.data?.logo}
                         alt="profile-pic"
                       />
                     </div>
                     <div className="d-flex flex-wrap align-items-center mb-3 mb-sm-0">
-                      <h4 className="me-2 h4 text-capitalize">{datos?.names}</h4>
-                      <span> - {datos?.role ? datos?.name_company: 'Marketing'} {datos?.role ? 'Company': 'Client'}</span>
+                      <h4 className="me-2 h4 text-capitalize">{data?.data?.names}</h4>
+                      <span> - {data?.data?.role ? datos?.name_company: 'Marketing'} {data?.data?.role ? 'Company': 'Client'}</span>
                     </div>
                   </div>
                   <div>

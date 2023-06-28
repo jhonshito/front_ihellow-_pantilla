@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 //react-bootstrap
 import { Row, Col, Form, Image, Button } from 'react-bootstrap'
@@ -11,10 +11,117 @@ import { Link } from 'react-router-dom'
 
 // img
 import imgsuccess from '../../assets/images/pages/img-success.png'
+import { useLista_company_by_idQuery, useUpdate_company_cardMutation, useAdd_logo_companyMutation } from "../../api/apiSplice";
+import { useGetLocalStorange, useSendLocalStorange } from "../hooks/sendLocalstorange";
+import Loader from '../loading/Loader'
 
 const Company = () => {
+    const id = useGetLocalStorange('data')?.id;
+    const { data, isLoading, error } = useLista_company_by_idQuery({ id });
+    const [ update_company_card ] = useUpdate_company_cardMutation();
+    const [ add_logo_company ] = useAdd_logo_companyMutation();
+    const [datos, setDatos] = useState({
+        name: data?.result?.name || '',
+        identify: data?.result?.identify || '',
+        phones: data?.result?.phones || '',
+        addresses: data?.result?.addresses || '',
+        country: data?.result?.country || '',
+        city: data?.result?.city || '',
+        pagina_web: '',
+        linkedin: '',
+        instagram: '',
+        facebook: '',
+        twitter: '',
+        tiktok: '',
+        canal_youtube: '',
+        enlace1: '',
+        enlace2: '',
+        enlace3: '',
+        ciudad: '',
+        barrio: '',
+        direccion: '',
+        recomendacion_card: '',
+        logo_company: useGetLocalStorange('logo_company') || 'logo_company'
+    });
 
     const [show, AccountShow] = useState('A');
+
+    useEffect(() => {
+        setDatos((prevDatos) => ({
+            ...prevDatos,
+            name: data?.result?.name || '',
+            identify: data?.result?.identify || '',
+            phones: data?.result?.phones || '',
+            addresses: data?.result?.addresses || '',
+            country: data?.result?.country || '',
+            city: data?.result?.city || '',
+        }));
+    }, [data]);
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setDatos((prevDatos) => ({
+          ...prevDatos,
+          [name]: value
+        }));
+    };
+
+    const handleFile = async(event) => {
+        const inputName = event.target.name;
+        const file = event.target.files[0]; // Solo captura el primer archivo seleccionado
+        const formData = new FormData();
+        formData.append('file', file, inputName);
+  
+        try {
+            
+            const res = await add_logo_company({id: data?.result?.id, formData});
+            console.log(res)
+            useSendLocalStorange(res?.data?.original_filename, res?.data?.url)
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    const handleNextOne = () => {
+        console.log(datos)
+
+        AccountShow('Account')
+    }
+
+    const handleNextTwo = () => {
+        console.log(datos)
+        AccountShow('Personal')
+    }
+
+    const handlePeticion = async() => {
+
+        AccountShow('Image')
+
+        const {name, identify,phones,addresses,country,city,pagina_web,linkendin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company} = datos
+
+        const logo = useGetLocalStorange('logo_company');
+
+        try {
+            const res = await update_company_card({name, identify,phones,addresses,country,city,pagina_web,linkendin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company: logo_company || logo});
+
+            console.log(res)
+        } catch (error) {
+            console.log(error)
+        }
+
+        
+    }
+
+    if (isLoading) {
+        return <Loader />; // Muestra un componente de carga mientras se obtienen los datos
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>; // Manejo de error
+    }
+
 
   return (
     <Row>
@@ -86,42 +193,42 @@ const Company = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Name: *</label>
-                                                <input type="text" className="form-control" name="name" placeholder="Name Id" />
+                                                <input type="text" className="form-control" name="name" value={datos?.name} onChange={handleChange} placeholder="Name Id" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Identify: *</label>
-                                                <input type="text" className="form-control" name="identify" placeholder="Identify" />
+                                                <input type="text" className="form-control" name="identify" value={datos?.identify} onChange={handleChange} placeholder="Identify" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Phones: *</label>
-                                                <input type="text" className="form-control" name="phone" placeholder="Phone" />
+                                                <input type="text" className="form-control" name="phone" value={datos?.phones} onChange={handleChange}  placeholder="Phone" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Addresses: *</label>
-                                                <input type="text" className="form-control" name="addresses" placeholder="Addresses" />
+                                                <input type="text" className="form-control" name="addresses" value={datos?.addresses} onChange={handleChange}  placeholder="Addresses" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Country: *</label>
-                                                <input type="text" className="form-control" name="country" placeholder="Country" />
+                                                <input type="text" className="form-control" name="country" value={datos?.country} onChange={handleChange}  placeholder="Country" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">City: *</label>
-                                                <input type="text" className="form-control" name="city" placeholder="City" />
+                                                <input type="text" className="form-control" value={datos?.city} onChange={handleChange} name="city" placeholder="City" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={() => AccountShow('Account')} >Next</Button>
+                                <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={handleNextOne} >Next</Button>
                             </fieldset>
                             <fieldset className={`${show === 'Account' ? 'd-block' : 'd-none'}`}>
                                 <div className="form-card text-start">
@@ -137,67 +244,67 @@ const Company = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Página Web.</label>
-                                                <input type="text" className="form-control" name="fname" placeholder="Ingresa tu sitio web" />
+                                                <input type="text" className="form-control" name="pagina_web" onChange={handleChange} placeholder="Ingresa tu sitio web" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">LinkedIn</label>
-                                                <input type="text" className="form-control" name="lname" placeholder="Ingresa tu LinkedIn" />
+                                                <input type="text" name="linkedin" onChange={handleChange}  className="form-control" placeholder="Ingresa tu LinkedIn" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Instagram</label>
-                                                <input type="text" className="form-control" name="phno" placeholder="Ingresa tu Instagram" />
+                                                <input type="text" className="form-control" name="instagram" onChange={handleChange} placeholder="Ingresa tu Instagram" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Facebook</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Facebook" />
+                                                <input type="text" className="form-control" name="facebook" onChange={handleChange} placeholder="Ingresa tu Facebook" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Twitter</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Twitter" />
+                                                <input type="text" className="form-control" name="twitter" onChange={handleChange}  placeholder="Ingresa tu Twitter" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">TikTok</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu TikTok" />
+                                                <input type="text" className="form-control" name="tiktok" onChange={handleChange} placeholder="Ingresa tu TikTok" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Cana de Youtube</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Cana de Youtube" />
+                                                <input type="text" className="form-control" name="canal_youtube" onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace1" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace2" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace3" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Tu Ciudad de Entrega: *</label>
-                                                <select name="" className="form-control">
+                                                <select name="ciudad" className="form-control" onChange={handleChange}>
                                                     <option value="" disabled selected hidden>Selecciona una opción.</option>
                                                     <option value="bogota">Bogota</option>
                                                     <option value="cali">Cali</option>
@@ -208,19 +315,19 @@ const Company = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Barrio de Entrega</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu barrio" />
+                                                <input type="text" className="form-control" name="barrio" onChange={handleChange} placeholder="Ingresa tu barrio" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Dirección de Entrega</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Dirección" />
+                                                <input type="text" className="form-control" name="direccion" onChange={handleChange} placeholder="Ingresa tu Dirección" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Tu tarjeta tendrá de manera obligatoria el QR. Dinos qué deseas que aparezca en tu Tarjeta Impresa: *</label>
-                                                <select name="" className="form-control">
+                                                <select name="recomendacion_card" onChange={handleChange} className="form-control">
                                                     <option value="" disabled selected hidden>Selecciona una opción.</option>
                                                     <option value="logo">Tu Logo (Recomendable)</option>
                                                     <option value="marca">Tu Nombre o Marca Personal (Recomendable si tu logo no cuenta con tu nombre)</option>
@@ -230,7 +337,7 @@ const Company = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={() => AccountShow('Personal')} >Next</Button>
+                                <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={handleNextTwo} >Next</Button>
                                 <Button type="button" name="previous" className="btn btn-dark previous action-button-previous float-end me-1" value="Previous" onClick={() => AccountShow('A')} >Previous</Button>
                             </fieldset>
                             <fieldset className={`${show === 'Personal' ? 'd-block' : 'd-none'}`}>
@@ -245,10 +352,10 @@ const Company = () => {
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">Logo company:</label>
-                                        <input type="file" className="form-control" name="logocompany" accept="image/*" />
+                                        <input type="file" onChange={handleFile} className="form-control" name="logo_company" accept="image/*" />
                                     </div>
                                 </div>
-                                <button type="button" name="next" className="btn btn-primary next action-button float-end" value="Submit" onClick={() => AccountShow('Image')} >Submit</button>
+                                <button type="button" name="next" className="btn btn-primary next action-button float-end" value="Submit" onClick={handlePeticion} >Submit</button>
                                 <button type="button" name="previous" className="btn btn-dark previous action-button-previous float-end me-1" value="Previous" onClick={() => AccountShow('Account')} >Previous</button>
                             </fieldset>
                             <fieldset className={`${show === 'Image' ? 'd-block' : 'd-none'}`}>

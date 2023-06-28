@@ -10,25 +10,13 @@ import { AiFillFacebook, AiOutlineWhatsApp, AiFillInstagram, AiFillYoutube } fro
 import { BsPersonFillAdd } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { MdOpenInBrowser } from "react-icons/md";
-
-
-import Choices from "./Choices";
-import Flatpickr from "react-flatpickr";
-
-// moment.js
-import moment from "moment";
-
-const options = [
-    {value: new Date(), label: "Today"},
-    { value: "7", label: "Past 7 Days" },
-    { value: "15", label: "Past 15 Days" },
-    { value: "30", label: "Past 30 Days" },
-  ];
   
 import { useLista_serviceMutation } from "../api/apiSplice";
 import Loader from "./loading/Loader";
 
-const Data = ({dataFecha}) => {
+import { useGetLocalStorange } from "./hooks/sendLocalstorange";
+
+const Data = ({idLanding, fechaFiltro}) => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [lista] = useLista_serviceMutation();
@@ -42,9 +30,9 @@ const Data = ({dataFecha}) => {
             setIsLoading(true); // Mostrar el loading
 
             const res = await lista({
-              id_landing: JSON.parse(localStorage.getItem('data')).id_landing,
-              fechaInicial: dataFecha?.fechaInicial,
-              fechaFinal: dataFecha?.fechaFinal
+              id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data').id_landing || idLanding ,
+              fechaInicial: fechaFiltro?.fechaInicial,
+              fechaFinal: fechaFiltro?.fechaFinal
             });
             setData(res)
           } catch (error) {
@@ -55,7 +43,7 @@ const Data = ({dataFecha}) => {
         };
       
         fetchData();
-    }, [dataFecha?.fechaInicial, dataFecha?.fechaFinal])
+    }, [fechaFiltro?.fechaInicial, fechaFiltro?.fechaFinal, idLanding])
 
     if(isLoading){
       return <Loader />

@@ -25,8 +25,10 @@ import * as SettingSelector from "../../store/setting/selectors";
 
 import moment from "moment";
 
-import { useMetricasMutation, useEstadisticasMutation } from "../../api/apiSplice";
+import { useMetricasMutation, useEstadisticasMutation, useGraficaMutation } from "../../api/apiSplice";
 import Loader from "../loading/Loader";
+
+import { useGetLocalStorange } from "../hooks/sendLocalstorange";
 
 const InicioEmpresario = ({idLanding, fechas}) => {
 
@@ -34,18 +36,20 @@ const InicioEmpresario = ({idLanding, fechas}) => {
 
   const [metricas] = useMetricasMutation();
   const [estadisticas] = useEstadisticasMutation();
+  const [grafica] = useGraficaMutation();
 
   const [datos, setDatos] = useState();
   const [anality, setAnality] = useState();
+  const [dataGrafica, setDataGrafica] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true); // Mostrar el loading
         const res = await metricas({
-          id_landing: JSON.parse(localStorage.getItem('idLanding')),
-          fechaInicial: fechas.fechaInicial,
-          fechaFinal: fechas.fechaFinal
+          id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
+          fechaInicial: fechas?.fechaInicial,
+          fechaFinal: fechas?.fechaFinal
         });
         setDatos(res);
       } catch (error) {
@@ -56,16 +60,16 @@ const InicioEmpresario = ({idLanding, fechas}) => {
     };
     
     fetchData();
-  }, [fechas.fechaInicial, fechas.fechaFinal, idLanding]);
+  }, [fechas?.fechaInicial, fechas?.fechaFinal, idLanding]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true); // Mostrar el loading
         const res = await estadisticas({
-          id_landing: JSON.parse(localStorage.getItem('idLanding')),
-          fechaInicial: fechas.fechaInicial,
-          fechaFinal: fechas.fechaFinal
+          id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
+          fechaInicial: fechas?.fechaInicial,
+          fechaFinal: fechas?.fechaFinal
         });
         setAnality(res)
       } catch (error) {
@@ -76,12 +80,33 @@ const InicioEmpresario = ({idLanding, fechas}) => {
     };
     
     fetchData();
-  }, [fechas.fechaInicial, fechas.fechaFinal, idLanding])
+  }, [fechas?.fechaInicial, fechas?.fechaFinal, idLanding]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true); // Mostrar el loading
+        const res = await grafica({
+          id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
+          fechaInicial: fechas?.fechaInicial,
+          fechaFinal: fechas?.fechaFinal
+        });
+        console.log(res)
+        setDataGrafica(res);
+      } catch (error) {
+        console.log(error);
+      }finally{
+        setIsLoading(false); // Ocultar el loading
+      }
+    };
+    
+    fetchData();
+  }, [fechas?.fechaInicial, fechas?.fechaFinal, idLanding])
 
   let navigate = useNavigate();
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('data'))
+    const data = useGetLocalStorange('data')
     if(!data) return navigate('/')
   }, [])
 
@@ -138,7 +163,7 @@ const InicioEmpresario = ({idLanding, fechas}) => {
   const json = {
     total: 100,
     arrayData: [
-      { name: "facebook", data: [16,12,44,56,76,44,22,33,99] },
+      { name: "facebook", data: [16,12,0,0,0] },
       { name: "whatsapp", data: [9,44,5,66,2,4,]},
       { name: "contacto", data: [13,23,21,45,6,67,]},
       { name: "instagram", data: [2,5,33,65,55,95,5]},
@@ -148,8 +173,8 @@ const InicioEmpresario = ({idLanding, fechas}) => {
   }
 
   // Definir las fechas de inicio y fin
-  const fechaInicio = moment(new Date(), 'YYYY/MM/DD');
-  const fechaFin = moment(new Date(), 'YYYY/MM/DD');
+  const fechaInicio = moment(fechas?.fechaInicial || new Date, 'YYYY/MM/DD');
+  const fechaFin = moment(fechas?.fechaFinal || new Date, 'YYYY/MM/DD');
 
   // Crear una matriz para almacenar los días
   const listaDias = [];
@@ -157,6 +182,10 @@ const InicioEmpresario = ({idLanding, fechas}) => {
   // Iterar a través de las fechas y agregarlas a la matriz
   for (let fecha = fechaInicio; fecha.isSameOrBefore(fechaFin); fecha.add(1, 'day')) {
     listaDias.push(fecha.format('YYYY/MM/DD'));
+  }
+
+  if(isLoading){
+    return <Loader />
   }
 
   const chart2 = {
@@ -209,7 +238,7 @@ const InicioEmpresario = ({idLanding, fechas}) => {
       },
     },
     yaxis: {
-      max: json?.total // Establecer el valor máximo deseado
+      max: json.total // Establecer el valor máximo deseado
     },
     },
     series: json?.arrayData.map((item) => {
@@ -219,10 +248,6 @@ const InicioEmpresario = ({idLanding, fechas}) => {
       };
     }),
   };
-
-  if(isLoading){
-    return <Loader />
-  }
 
 
   return (

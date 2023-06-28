@@ -10,6 +10,8 @@ import { MdOpenInBrowser } from "react-icons/md";
 import { useLista_serviceMutation } from "../../api/apiSplice";
 import Loader from "../loading/Loader";
 
+import { useGetLocalStorange } from "../hooks/sendLocalstorange";
+
 const DataEmpresario = ({idLanding, fecha}) => {
 
   const [isLoading, setIsLoading] = useState(true);
@@ -22,7 +24,7 @@ const DataEmpresario = ({idLanding, fecha}) => {
       try {
         setIsLoading(true); // Mostrar el loading
         const res = await lista({
-          id_landing: idLanding || JSON.parse(localStorage.getItem('idLanding')),
+          id_landing: idLanding || useGetLocalStorange('idLanding'),
           fechaInicial: fecha.fechaInicial,
           fechaFinal: fecha.fechaFinal
         });

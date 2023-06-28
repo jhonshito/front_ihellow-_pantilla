@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 //react-bootstrap
 import { Row, Col, Form, Image, Button } from 'react-bootstrap'
@@ -11,10 +11,89 @@ import { Link } from 'react-router-dom'
 
 // img
 import imgsuccess from '../assets/images/pages/img-success.png'
+import { useGetLocalStorange } from "./hooks/sendLocalstorange";
+import { useLista_landing_by_idQuery, useUpdate_landingMutation } from "../api/apiSplice";
+import Loader from './loading/Loader'
 
 const Landing = () => {
 
-  const [show, AccountShow] = useState('A');
+    const id = useGetLocalStorange('data')?.id_landing || useGetLocalStorange('idLanding');
+    const { data, isLoading, error } = useLista_landing_by_idQuery({ id });
+    const [ update_landing ] = useUpdate_landingMutation();
+    const [datos, setDatos] = useState({
+        alias: data?.result?.alias || '',
+        url: data?.result?.url || '',
+        seo: data?.result?.url || '',
+        pagina_web: '',
+        linkedin: '',
+        instagram: '',
+        facebook: '',
+        twitter: '',
+        tiktok: '',
+        canal_youtube: '',
+        enlace1: '',
+        enlace2: '',
+        enlace3: '',
+        ciudad: '',
+        barrio: '',
+        direccion: '',
+        recomendacion_card: ''
+    });
+
+    const [show, AccountShow] = useState('A');
+
+    useEffect(() => {
+        setDatos((prevDatos) => ({
+          ...prevDatos,
+          alias: data?.result?.alias || '',
+          url: data?.result?.url || '',
+          seo: data?.result?.seo || ''
+        }));
+    }, [data]);
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setDatos((prevDatos) => ({
+          ...prevDatos,
+          [name]: value
+        }));
+    };
+
+    const handelNext = () => {
+        if(datos.alias && datos.url && datos.seo){
+            AccountShow('Account')
+            console.log(datos)
+        }
+    }
+
+    const handelNextTwo = async() => {
+
+        const {alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+        recomendacion_card} = datos;
+
+        try {
+            const res = await update_landing({alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+            recomendacion_card});
+
+            if(res?.data?.status == 200){
+                AccountShow('Personal');
+            }
+
+            console.log(res)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    if (isLoading) {
+        return <Loader />; // Muestra un componente de carga mientras se obtienen los datos
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>; // Manejo de error
+    }
+
 
   return (
     <Row>
@@ -76,24 +155,26 @@ const Landing = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Alias: *</label>
-                                                <input type="text" className="form-control" name="cpwd" placeholder="Ingresa el nombre de tu negocio" />
+                                                <input type="text" className="form-control"
+                                                value={datos?.alias}
+                                                onChange={handleChange}name="alias" placeholder="Ingresa el nombre de tu negocio" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">url: *</label>
-                                                <input type="text" className="form-control" name="cpwd" placeholder="Ejemplo: Emprendedor, Empresario, Gerente General" />
+                                                <input type="text" className="form-control" name="url" value={datos?.url} onChange={handleChange} placeholder="Ejemplo: Emprendedor, Empresario, Gerente General" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Seo</label>
-                                                <input type="text" className="form-control" name="cpwd" placeholder="Ejemplo: España, Japon, Marruecos" />
+                                                <input type="text" className="form-control" name="seo" value={datos?.seo} onChange={handleChange} placeholder="Ejemplo: España, Japon, Marruecos" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={() => AccountShow('Account')} >Next</Button>
+                                <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={handelNext} >Next</Button>
                             </fieldset>
                             <fieldset className={`${show === 'Account' ? 'd-block' : 'd-none'}`}>
                                 <div className="form-card text-start">
@@ -109,67 +190,67 @@ const Landing = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Página Web.</label>
-                                                <input type="text" className="form-control" name="fname" placeholder="Ingresa tu sitio web" />
+                                                <input type="text" className="form-control" name="pagina_web" onChange={handleChange} placeholder="Ingresa tu sitio web" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">LinkedIn</label>
-                                                <input type="text" className="form-control" name="lname" placeholder="Ingresa tu LinkedIn" />
+                                                <input type="text" className="form-control" name="linkedin" onChange={handleChange} placeholder="Ingresa tu LinkedIn" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Instagram</label>
-                                                <input type="text" className="form-control" name="phno" placeholder="Ingresa tu Instagram" />
+                                                <input type="text" className="form-control" name="instagram" onChange={handleChange} placeholder="Ingresa tu Instagram" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Facebook</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Facebook" />
+                                                <input type="text" className="form-control" name="facebook" onChange={handleChange} placeholder="Ingresa tu Facebook" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Twitter</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Twitter" />
+                                                <input type="text" className="form-control" name="twitter" onChange={handleChange} placeholder="Ingresa tu Twitter" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">TikTok</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu TikTok" />
+                                                <input type="text" className="form-control" name="tiktok" onChange={handleChange} placeholder="Ingresa tu TikTok" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Cana de Youtube</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Cana de Youtube" />
+                                                <input type="text" className="form-control" name="canal_youtube" onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace1" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace2" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace3" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Tu Ciudad de Entrega: *</label>
-                                                <select name="" className="form-control">
+                                                <select name="ciudad" className="form-control" onChange={handleChange}>
                                                     <option value="" disabled selected hidden>Selecciona una opción.</option>
                                                     <option value="bogota">Bogota</option>
                                                     <option value="cali">Cali</option>
@@ -180,19 +261,19 @@ const Landing = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Barrio de Entrega</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu barrio" />
+                                                <input type="text" className="form-control" name="barrio" onChange={handleChange} placeholder="Ingresa tu barrio" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Dirección de Entrega</label>
-                                                <input type="text" className="form-control" name="phno_2" placeholder="Ingresa tu Dirección" />
+                                                <input type="text" className="form-control" name="direccion" onChange={handleChange} placeholder="Ingresa tu Dirección" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Tu tarjeta tendrá de manera obligatoria el QR. Dinos qué deseas que aparezca en tu Tarjeta Impresa: *</label>
-                                                <select name="" className="form-control">
+                                                <select name="recomendacion_card" onChange={handleChange} className="form-control">
                                                     <option value="" disabled selected hidden>Selecciona una opción.</option>
                                                     <option value="logo">Tu Logo (Recomendable)</option>
                                                     <option value="marca">Tu Nombre o Marca Personal (Recomendable si tu logo no cuenta con tu nombre)</option>
@@ -205,7 +286,7 @@ const Landing = () => {
                                 {/* <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={() => AccountShow('Personal')} >Next</Button>
                                 <Button type="button" name="previous" className="btn btn-dark previous action-button-previous float-end me-1" value="Previous" onClick={() => AccountShow('A')} >Previous</Button> */}
                             <fieldset className={`${show !== 'Personal' ? 'd-block' : 'd-none'}`}>
-                                <button type="button" name="next" className="btn btn-primary next action-button float-end" value="Submit" onClick={() => AccountShow('Personal')} >Submit</button>
+                                <button type="button" name="next" className="btn btn-primary next action-button float-end" value="Submit" onClick={handelNextTwo} >Submit</button>
                                 <button type="button" name="previous" className="btn btn-dark previous action-button-previous float-end me-1" value="Previous" onClick={() => AccountShow('A')} >Previous</button>
                             </fieldset>
                             </fieldset>

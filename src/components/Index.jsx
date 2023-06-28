@@ -28,6 +28,8 @@ import moment from "moment";
 import { useMetricasMutation, useEstadisticasMutation } from "../api/apiSplice";
 import Loader from "./loading/Loader";
 
+import { useGetLocalStorange } from "./hooks/sendLocalstorange";
+
 const Index = ({fechas}) => {
 
     const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +48,7 @@ const Index = ({fechas}) => {
             setIsLoading(true); // Mostrar el loading
 
             const res = await metricas({
-              id_landing: JSON.parse(localStorage.getItem('data')).id_landing,
+              id_landing: useGetLocalStorange('data').id_landing,
               fechaInicial: fechas?.fechaInicial,
               fechaFinal: fechas?.fechaFinal
             });
@@ -59,7 +61,7 @@ const Index = ({fechas}) => {
         };
       
         // fetchData();
-        const role = JSON.parse(localStorage.getItem('data')).role;
+        const role = useGetLocalStorange('data').role;
         if (role === false) {
           fetchData();
         }
@@ -72,7 +74,7 @@ const Index = ({fechas}) => {
             setIsLoading(true); // Mostrar el loading
 
             const res = await estadisticas({
-              id_landing: JSON.parse(localStorage.getItem('data')).id_landing,
+              id_landing: useGetLocalStorange('data').id_landing,
               fechaInicial: fechas?.fechaInicial,
               fechaFinal: fechas?.fechaFinal
             });
@@ -85,7 +87,7 @@ const Index = ({fechas}) => {
         };
       
         // fetchData();
-        const role = JSON.parse(localStorage.getItem('data')).role;
+        const role = useGetLocalStorange('data').role;
         if (role === false) {
           fetchData();
         }
@@ -94,7 +96,7 @@ const Index = ({fechas}) => {
     let navigate = useNavigate();
 
     useEffect(() => {
-      const data = JSON.parse(localStorage.getItem('data'))
+      const data = useGetLocalStorange('data');
       if(!data) return navigate('/')
     }, [])
 

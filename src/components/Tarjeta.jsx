@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 //react-bootstrap
 import { Row, Col, Form, Image, Button } from 'react-bootstrap'
@@ -11,10 +11,112 @@ import { Link } from 'react-router-dom'
 
 // img
 import imgsuccess from '../assets/images/pages/img-success.png'
+import { useLista_card_by_idQuery, useAdd_img_cardMutation, useUpdateCardMutation } from "../api/apiSplice";
+import { useGetLocalStorange, useSendLocalStorange } from "./hooks/sendLocalstorange";
+import Loader from './loading/Loader'
 
 const Tarjeta = () => {
 
+    const [files, setFiles] = useState({
+        side_a: useGetLocalStorange('side_a') || null,
+        side_b: useGetLocalStorange('side_b') || null,
+        logo_card: useGetLocalStorange('logo_card') || null,
+        qr: useGetLocalStorange('qr') || null
+    });
+    
+    const id = useGetLocalStorange('data')?.id;
+    const { data, isLoading, error } = useLista_card_by_idQuery({ id });
+    const [add_img_card] = useAdd_img_cardMutation();
+    const [updateCard] = useUpdateCardMutation();
+    const [datos, setDatos] = useState({
+        title: data?.result?.title || '',
+        addresses: data?.result?.addresses_delivery || ''
+    });
+
     const [show, AccountShow] = useState('A');
+
+    useEffect(() => {
+        setDatos((prevDatos) => ({
+          ...prevDatos,
+          title: data?.result?.title || '',
+          addresses: data?.result?.addresses_delivery || ''
+        }));
+    }, [data]);
+
+    const handleChange = (event) => {
+        const newValue = event.target.value;
+        const inputName = event.target.name;
+        setDatos((prevDatos) => ({
+          ...prevDatos,
+          [inputName]: newValue,
+          [inputName]: newValue
+        }));
+    };
+
+    const handleFile = async(event) => {
+        const inputName = event.target.name;
+        const file = event.target.files[0]; // Solo captura el primer archivo seleccionado
+        const formData = new FormData();
+        formData.append('file', file, inputName);
+  
+        try {
+            
+            const res = await add_img_card({id: data?.result?.id, formData});
+            console.log(res)
+            useSendLocalStorange(res?.data?.original_filename, res?.data?.url)
+            // setFiles((prevFiles) => ({
+            //     ...prevFiles,
+            //     [res?.data?.original_filename]: res?.data?.url
+            // }));
+
+        } catch (error) {
+            console.log(error);
+        }
+
+        // setFiles((prevFiles) => ({
+        //     ...prevFiles,
+        //     [inputName]: file
+        // }));
+    }
+
+    const handleSubmit = async(e) => {
+        console.log(datos)
+
+        const side_a = useGetLocalStorange('side_a');
+        const side_b = useGetLocalStorange('side_b');
+        const logo_card = useGetLocalStorange('logo_card');
+        const qr = useGetLocalStorange('qr');
+
+        console.log(side_a)
+        console.log(side_b)
+        console.log(logo_card)
+        console.log(qr)
+
+        if(side_a !== null && side_b !== null && logo_card !== null && qr !== null){
+
+            try {
+                const res = await updateCard({id_card: data?.result?.id, title: datos?.title, addresses: datos?.addresses, side_a, side_b, logo_card, qr});
+                console.log(res)
+                res?.data?.status == 200 ? AccountShow('Personal') :
+                console.log(res)
+            } catch (error) {
+                console.log(error)
+            }
+
+            // AccountShow('Personal')
+        }
+    }
+
+    if (isLoading) {
+        return <Loader />; // Muestra un componente de carga mientras se obtienen los datos
+    }
+    
+    if (error) {
+        return <div>Error: {error.message}</div>; // Manejo de error
+    }
+
+    // console.log(data)
+
 
   return (
     <Row>
@@ -76,7 +178,19 @@ const Tarjeta = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Title *</label>
-                                                <input type="text" className="form-control" name="cpwd" placeholder="Ingresa el nombre de tu negocio" />
+                                                <input type="text" className="form-control" name="title"
+                                                value={datos?.title}
+                                                onChange={handleChange}
+                                                placeholder="Ingresa el nombre de tu negocio" />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Addresses_delivery *</label>
+                                                <input type="text" className="form-control" name="addresses"
+                                                value={datos?.addresses}
+                                                onChange={handleChange}
+                                                placeholder="Ingresa el nombre de tu negocio" />
                                             </div>
                                         </div>
                                     </div>
@@ -96,22 +210,22 @@ const Tarjeta = () => {
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">Side a:</label>
-                                        <input type="file" className="form-control" name="pic" accept="image/*" />
+                                        <input type="file" className="form-control" name="side_a" onChange={handleFile} accept="image/*" />
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">Side b:</label>
-                                        <input type="file" className="form-control" name="pic-2" accept="image/*" />
+                                        <input type="file" className="form-control" name="side_b" onChange={handleFile} accept="image/*" />
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">Logo card:</label>
-                                        <input type="file" className="form-control" name="pic-2" accept="image/*" />
+                                        <input type="file" className="form-control" onChange={handleFile} name="logo_card" accept="image/*" />
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">QR:</label>
-                                        <input type="file" className="form-control" name="pic-2" accept="image/*" />
+                                        <input type="file" className="form-control" onChange={handleFile} name="qr" accept="image/*" />
                                     </div>
                             </div>
-                                <button type="button" name="next" className="btn btn-primary next action-button float-end" value="Submit" onClick={() => AccountShow('Personal')} >Submit</button>
+                                <button type="button" name="next" className="btn btn-primary next action-button float-end" value="Submit" onClick={handleSubmit} >Submit</button>
                                 <button type="button" name="previous" className="btn btn-dark previous action-button-previous float-end me-1" value="Previous" onClick={() => AccountShow('A')} >Previous</button>
                             </fieldset>
                             </fieldset>

@@ -25,6 +25,7 @@ import Card from "./bootstrap/card";
 import Logo from "../assets/iHellow-Logo.webp";
 
 import { useLoginMutation } from "../api/apiSplice";
+import { useSendLocalStorange } from "./hooks/sendLocalstorange";
 
 const Login = ({setEstado, estado}) => {
 
@@ -79,7 +80,8 @@ const Login = ({setEstado, estado}) => {
          if (res.data.status === 200) {
             const data = res.data.data
             console.log(data)
-            localStorage.setItem('data', JSON.stringify(data));
+            // localStorage.setItem('data', JSON.stringify(data));
+            useSendLocalStorange('data', data);
             setTimeout(() => {
                setEstado(estado + 1)
                navigate('/home');

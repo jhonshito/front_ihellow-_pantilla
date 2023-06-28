@@ -107,7 +107,6 @@ const Empresario = ({setIdLanding, setFecha}) => {
         // setAnality(res)
         if(res.data){
           setDatos(res?.data?.cards)
-          console.log(res.data)
           localStorage.setItem('idLanding', JSON.stringify(res?.data?.cards[0]?.id_landing));
           setSelectedOption(res?.data?.cards[0]);
         }

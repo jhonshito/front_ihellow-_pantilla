@@ -12,6 +12,7 @@ import Flatpickr from "react-flatpickr";
 
 import moment from "moment";
 import Index from '../Index';
+import InicioEmpresario from '../empresario/InicioEmpresario';
 const options = [
   {value: new Date(), label: "Today"},
   { value: "7", label: "Past 7 Days" },
@@ -132,7 +133,7 @@ const DataFilter = ({setDataFecha}) => {
       </div>
       {
         location.pathname === '/home' ?
-        <Index fechas={fechas} />: ''
+        <InicioEmpresario fechas={fechas} />: ''
       }
         <Suspense fallback="loading">
             <Outlet></Outlet>

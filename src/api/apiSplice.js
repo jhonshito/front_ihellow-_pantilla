@@ -8,6 +8,7 @@ export const apiSplice = createApi({
 
     tagTypes: ['Ihellow'],
     endpoints: (buider) => ({
+        // esto hace el login
         login: buider.mutation({
             query: ({ namesuser, password }) => ({
                 url: 'login',
@@ -15,6 +16,20 @@ export const apiSplice = createApi({
                 body: { namesuser: namesuser, password: password }
             }),
             providesTags: ['log']
+        }),
+
+        // Esto trae los datos del ususrio
+        find_user: buider.query({
+            query: ({id}) => `data_user/${id}`,
+            providesTags: ['data']
+        }),
+
+        grafica: buider.mutation({
+            query: ({id_landing, fechaInicial, fechaFinal}) => ({
+                url: "grafica",
+                method: "POST",
+                body: {id_landing, fechaInicial, fechaFinal}
+            })
         }),
 
         register: buider.mutation({
@@ -64,9 +79,89 @@ export const apiSplice = createApi({
                 method: 'POST',
                 body: formData
             }),
-            invalidatesTags: ['log']
+            invalidatesTags: ['data']
+        }),
+
+        // trae los datos de la card
+        lista_card_by_id: buider.query({
+            query: ({id}) => `listCardById/${id}`
+        }),
+
+        // trae los datos de la landing
+        lista_landing_by_id: buider.query({
+            query: ({id}) => `listLandingById/${id}`
+        }),
+
+        // trae los datos del company 
+        lista_company_by_id: buider.query({
+            query: ({id}) => `dataCompanyByInd/${id}`
+        }),
+
+        // agrego las imagenes de la card
+        add_img_card: buider.mutation({
+            query: ({id, formData}) => ({
+                url: `add_img_card/${id}`,
+                method: 'POST',
+                body: formData
+            })
+        }),
+
+        // actualiza la card
+        updateCard: buider.mutation({
+            query: ({id_card, title, addresses, side_a, side_b, logo_card, qr}) => ({
+                url: 'update_card',
+                method: 'PUT',
+                body: {id_card, title, addresses, side_a, side_b, logo_card, qr}
+            })
+        }),
+
+        // actualiza la landing
+        update_landing: buider.mutation({
+            query: ({alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+            recomendacion_card}) => ({
+                url: 'update_landing',
+                method: 'PUT',
+                body: {alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+                recomendacion_card}
+            })
+        }),
+
+        // actualizo los datos de la card company
+        update_company_card: buider.mutation({
+            query: ({name,identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}) => ({
+                url: 'update_company_card',
+                method: 'PUT',
+                body: {name, identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}
+            })
+        }),
+
+        // subo el logo de la card company
+        add_logo_company: buider.mutation({
+            query: ({id, formData}) => ({
+                url: `add_logo_company/${id}`,
+                method: 'POST',
+                body: formData
+            })
         })
     })
 });
 
-export const { useLoginMutation, useMetricasMutation, useEstadisticasMutation, useLista_serviceMutation, useRegisterMutation, useCards_listMutation, useAdd_photoMutation } = apiSplice
+export const { 
+    useLoginMutation, 
+    useMetricasMutation, 
+    useEstadisticasMutation, 
+    useLista_serviceMutation, 
+    useRegisterMutation, 
+    useCards_listMutation, 
+    useAdd_photoMutation, 
+    useFind_userQuery,
+    useGraficaMutation,
+    useLista_card_by_idQuery,
+    useLista_landing_by_idQuery,
+    useLista_company_by_idQuery,
+    useAdd_img_cardMutation,
+    useUpdateCardMutation,
+    useUpdate_landingMutation,
+    useUpdate_company_cardMutation,
+    useAdd_logo_companyMutation
+} = apiSplice
