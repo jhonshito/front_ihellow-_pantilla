@@ -28,7 +28,6 @@ const Landing = ({role}) => {
         alias: data?.result?.alias || '',
         url: data?.result?.url || '',
         seo: data?.result?.url || '',
-        pagina_web: '',
         linkedin: '',
         instagram: '',
         facebook: '',
@@ -70,15 +69,16 @@ const Landing = ({role}) => {
         }
     }
 
-    const handelNextTwo = async() => {
+    const handelNextTwo = async({idLanding}) => {
 
-        const id_landing = role?.role ? useGetLocalStorange('dataUserSelect')?.id_landing: useGetLocalStorange('data')?.id_landing;
-        const {alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+        const id_landing = role?.role ? idLanding: useGetLocalStorange('data')?.id_landing;
+
+        const {alias, url, seo, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
         recomendacion_card} = datos;
         console.log(id_landing)
 
         try {
-            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
             recomendacion_card});
 
             const { data, error } = res;
@@ -152,7 +152,7 @@ const Landing = ({role}) => {
                                                 <path fillRule="evenodd" clipRule="evenodd" d="M7.7688 8.71118H16.2312C18.5886 8.71118 20.5 10.5808 20.5 12.8867V17.8246C20.5 20.1305 18.5886 22.0001 16.2312 22.0001H7.7688C5.41136 22.0001 3.5 20.1305 3.5 17.8246V12.8867C3.5 10.5808 5.41136 8.71118 7.7688 8.71118ZM11.9949 17.3286C12.4928 17.3286 12.8891 16.941 12.8891 16.454V14.2474C12.8891 13.7703 12.4928 13.3827 11.9949 13.3827C11.5072 13.3827 11.1109 13.7703 11.1109 14.2474V16.454C11.1109 16.941 11.5072 17.3286 11.9949 17.3286Z" fill="currentColor"></path>
                                             </svg>
                                         </div>
-                                        <span>Account</span>
+                                        <span>Setting</span>
                                     </Link>
                                 </li>
                                 <li id="personal" className={`${show === 'Personal' ? ' active done' : ''} ${show === 'Account' ? 'active ' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
@@ -163,7 +163,7 @@ const Landing = ({role}) => {
                                                 <path opacity="0.4" d="M11.9971 12.5838C14.9351 12.5838 17.2891 10.2288 17.2891 7.29176C17.2891 4.35476 14.9351 1.99976 11.9971 1.99976C9.06008 1.99976 6.70508 4.35476 6.70508 7.29176C6.70508 10.2288 9.06008 12.5838 11.9971 12.5838Z" fill="currentColor"></path>
                                             </svg>
                                         </div>
-                                        <span>Personal</span>
+                                        <span>Buttons</span>
                                     </Link>
                                 </li>
                                 <li id="confirm" className={`${show === 'Personal' ? ' active ' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
@@ -225,12 +225,6 @@ const Landing = ({role}) => {
                                     <div className="row">
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label className="form-label">Página Web.</label>
-                                                <input type="text" className="form-control" name="pagina_web" onChange={handleChange} placeholder="Ingresa tu sitio web" />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
                                                 <label className="form-label">LinkedIn</label>
                                                 <input type="text" className="form-control" name="linkedin" onChange={handleChange} placeholder="Ingresa tu LinkedIn" />
                                             </div>
@@ -261,7 +255,7 @@ const Landing = ({role}) => {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label className="form-label">Cana de Youtube</label>
+                                                <label className="form-label">Youtube</label>
                                                 <input type="text" className="form-control" name="canal_youtube" onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
                                             </div>
                                         </div>

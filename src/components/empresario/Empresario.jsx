@@ -24,7 +24,7 @@ const options = [
 
 import { useSendLocalStorange } from "../hooks/sendLocalstorange";
 
-const Empresario = ({setIdLanding, setFecha}) => {
+const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [datos, setDatos] = useState();
@@ -93,15 +93,14 @@ const Empresario = ({setIdLanding, setFecha}) => {
 
   const handleValue = (event) => {
     setSelectedOption(event);
-    console.log(event)
     const userSelect = {
       id_user: event?.value2,
       id_card: event?.value3,
       id_landing: event?.value
     }
     useSendLocalStorange('dataUserSelect', userSelect)
-    console.log(selectedOption);
-    setIdLanding(event.value)
+    setIdLanding(event.value);
+    setIdUser(event?.value2);
     if(event){
       localStorage.setItem('idLanding', JSON.stringify(event.value))
     }
@@ -120,6 +119,7 @@ const Empresario = ({setIdLanding, setFecha}) => {
           localStorage.setItem('idLanding', JSON.stringify(res?.data?.cards[0]?.id_landing));
           setSelectedOption(res?.data?.cards[0]);
           useSendLocalStorange('dataUserSelect', res?.data?.cards[0])
+          setIdUser(res?.data?.cards[0]?.id_user);
         }
       } catch (error) {
         console.log(error);
@@ -142,6 +142,8 @@ const Empresario = ({setIdLanding, setFecha}) => {
   if(isLoading){
       return <Loader />
   }
+
+  // console.log(datos)
 
   return (
     <div>
@@ -169,52 +171,55 @@ const Empresario = ({setIdLanding, setFecha}) => {
         ) : (
           <p>No hay opciones disponibles.</p>
         )}
-        <div className="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3 mt-5">
-        <div className="d-flex flex-column">
-          <h3>Quick Insights</h3>
-          <p className="text-primary mb-0">Financial Dashboard</p>
+        {
+          location.pathname == '/home/tarjeta' ? '': location.pathname == '/home/landing' ? '':
+          <div className="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3 mt-5">
+          <div className="d-flex flex-column">
+            <h3>Quick Insights</h3>
+            <p className="text-primary mb-0">Financial Dashboard</p>
+          </div>
+          <div className="d-flex justify-content-between align-items-center rounded flex-wrap gap-3">
+            <div
+              className="form-group mb-0 custom-choicejs"
+              style={{ minWidth: "145px" }}
+            >
+              <ChoicesJs
+                options={options}
+                onChange={(event) => {
+                  setSelectedOption(event.target.value);
+                  handleComboFecha(event);
+                }}
+                className="js-choice"
+                select="one"
+                value={selectedOption}
+              />
+            </div>
+
+            <div className="form-group mb-0 ">
+              <Flatpickr
+                options={{ mode: "single", minDate: undefined }}
+                className="form-control range_flatpicker"
+                onChange={handleDateChange}
+                value={dateInicial}
+              />
+            </div>
+            <div className="form-group mb-0 ">
+              <Flatpickr
+                options={{ mode: "single", minDate: undefined }}
+                className="form-control range_flatpicker"
+                placeholder="Fecha final"
+                onChange={handleDateSecond}
+                value={dateFinal}
+              />
+            </div>
+
+            <Button type="button" onClick={handleSubmit} className="primary">
+              Analytics
+            </Button>
+
+          </div>
         </div>
-        <div className="d-flex justify-content-between align-items-center rounded flex-wrap gap-3">
-          <div
-            className="form-group mb-0 custom-choicejs"
-            style={{ minWidth: "145px" }}
-          >
-            <ChoicesJs
-              options={options}
-              onChange={(event) => {
-                setSelectedOption(event.target.value);
-                handleComboFecha(event);
-              }}
-              className="js-choice"
-              select="one"
-              value={selectedOption}
-            />
-          </div>
-
-          <div className="form-group mb-0 ">
-            <Flatpickr
-              options={{ mode: "single", minDate: undefined }}
-              className="form-control range_flatpicker"
-              onChange={handleDateChange}
-              value={dateInicial}
-            />
-          </div>
-          <div className="form-group mb-0 ">
-            <Flatpickr
-              options={{ mode: "single", minDate: undefined }}
-              className="form-control range_flatpicker"
-              placeholder="Fecha final"
-              onChange={handleDateSecond}
-              value={dateFinal}
-            />
-          </div>
-
-          <Button type="button" onClick={handleSubmit} className="primary">
-            Analytics
-          </Button>
-
-        </div>
-      </div>
+        }
           </div>
             {
               location.pathname === '/home' ?

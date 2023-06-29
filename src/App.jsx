@@ -39,6 +39,7 @@ function App() {
   const [estado, setEstado] = useState(0);
   const [role, setRole] = useState(0);
   const [idLanding, setIdLanding] = useState();
+  const [idUser, setIdUser] = useState();
   const [fecha, setFecha] = useState();
   const [dataFecha, setDataFecha] = useState();
 
@@ -59,13 +60,17 @@ function App() {
               {
                 role?.role ? (
                   <>
-                    <Route path="/home" element={<Empresario setIdLanding={setIdLanding} setFecha={setFecha} />} >
+                    <Route path="/home" element={<Empresario setIdLanding={setIdLanding} setFecha={setFecha} setIdUser={setIdUser} />} >
                       <Route path="/home/dataEmpresario" element={<Data idLanding={idLanding} fechaFiltro={fecha} />} />
+                      <Route path="/home/landing" element={<Landing role={role} idLanding={idLanding} />} />
+                      <Route path="/home/tarjeta" element={<Tarjeta role={role} idUser={idUser} />} />
                     </Route>
                   </>
                 ): (
                     <Route path="/home" element={<DataFilter setDataFecha={setDataFecha} />} >
                       <Route path="/home/data" element={<Data fechaFiltro={dataFecha} />} />
+                      <Route path="/home/landing" element={<Landing role={role} />} />
+                      <Route path="/home/tarjeta" element={<Tarjeta role={role} />} />
                     </Route>
                 )
               }
@@ -73,8 +78,7 @@ function App() {
                 role?.role ?
                 <Route path="/home/company" element={<Company />} />: ''
               }
-              <Route path="/home/landing" element={<Landing role={role} />} />
-              <Route path="/home/tarjeta" element={<Tarjeta role={role} />} />
+              
               <Route path="/home/perfil" element={<Perfil />} />
             </Route>
           </Routes>

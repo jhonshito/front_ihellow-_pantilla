@@ -47,6 +47,7 @@ const Company = () => {
         recomendacion_card: '',
         logo_company: useGetLocalStorange('logo_company') || 'logo_company'
     });
+    const [logo, setLogo] = useState(false);
 
     const [show, AccountShow] = useState('A');
 
@@ -137,6 +138,10 @@ const Company = () => {
         
     }
 
+    const handleEdit = () => {
+        setLogo(true)
+    }
+
     if (isLoading) {
         return <Loader />; // Muestra un componente de carga mientras se obtienen los datos
     }
@@ -145,6 +150,7 @@ const Company = () => {
         return <div>Error: {error.message}</div>; // Manejo de error
     }
 
+    // console.log(data)
 
   return (
     <Row>
@@ -183,7 +189,7 @@ const Company = () => {
                                                 <path fillRule="evenodd" clipRule="evenodd" d="M7.7688 8.71118H16.2312C18.5886 8.71118 20.5 10.5808 20.5 12.8867V17.8246C20.5 20.1305 18.5886 22.0001 16.2312 22.0001H7.7688C5.41136 22.0001 3.5 20.1305 3.5 17.8246V12.8867C3.5 10.5808 5.41136 8.71118 7.7688 8.71118ZM11.9949 17.3286C12.4928 17.3286 12.8891 16.941 12.8891 16.454V14.2474C12.8891 13.7703 12.4928 13.3827 11.9949 13.3827C11.5072 13.3827 11.1109 13.7703 11.1109 14.2474V16.454C11.1109 16.941 11.5072 17.3286 11.9949 17.3286Z" fill="currentColor"></path>
                                             </svg>
                                         </div>
-                                        <span>Account</span>
+                                        <span>Setting</span>
                                     </Link>
                                 </li>
                                 <li id="personal" className={`${show === 'Personal' ? ' active done' : ''} ${show === 'Image' ? ' active done' : ''} ${show === 'Account' ? 'active ' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
@@ -194,7 +200,7 @@ const Company = () => {
                                                 <path opacity="0.4" d="M11.9971 12.5838C14.9351 12.5838 17.2891 10.2288 17.2891 7.29176C17.2891 4.35476 14.9351 1.99976 11.9971 1.99976C9.06008 1.99976 6.70508 4.35476 6.70508 7.29176C6.70508 10.2288 9.06008 12.5838 11.9971 12.5838Z" fill="currentColor"></path>
                                             </svg>
                                         </div>
-                                        <span>Personal</span>
+                                        <span>Buttons</span>
                                     </Link>
                                 </li>
                                 <li id="payment" className={`${show === 'Image' ? ' active done' : ''} ${show === 'Personal' ? 'active' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
@@ -205,7 +211,7 @@ const Company = () => {
                                                 <path opacity="0.4" d="M17.44 6.2364L17.34 6.01665C17.07 5.44728 16.76 4.78801 16.57 4.40844C16.11 3.50943 15.32 3.00999 14.35 3H9.64C8.67 3.00999 7.89 3.50943 7.43 4.40844C7.23 4.80799 6.89 5.52719 6.61 6.11654L6.55 6.2364C6.52 6.31632 6.44 6.35627 6.36 6.35627C3.95 6.35627 2 8.3141 2 10.7114V16.6448C2 19.0422 3.95 21 6.36 21H17.64C20.04 21 22 19.0422 22 16.6448V10.7114C22 8.3141 20.04 6.35627 17.64 6.35627C17.55 6.35627 17.48 6.30633 17.44 6.2364Z" fill="currentColor"></path>
                                             </svg>
                                         </div>
-                                        <span>Image</span>
+                                        <span>Images</span>
                                     </Link>
                                 </li>
                                 <li id="confirm" className={`${show === 'Image' ? ' active ' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
@@ -319,7 +325,7 @@ const Company = () => {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label className="form-label">Cana de Youtube</label>
+                                                <label className="form-label">Youtube</label>
                                                 <input type="text" className="form-control" name="canal_youtube" onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
                                             </div>
                                         </div>
@@ -392,7 +398,23 @@ const Company = () => {
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">Logo company:</label>
-                                        <input type="file" onChange={handleFile} className="form-control" name="logo_company" accept="image/*" />
+                                        <div className='d-flex gap-5 align-items-center'>
+                                            {
+                                                data?.result?.logo ?
+                                                <div className="form-label">
+                                                    <img className="theme-color-img img-fluid avatar avatar-50" src={data?.result?.logo} alt="Company logo." />
+                                                </div>: ''
+                                            }
+                                            {
+                                                logo ?
+                                                <div className='w-75'>
+                                                    <input type="file" onChange={handleFile} className="form-control" name="logo_company" accept="image/*" />
+                                                </div>:
+                                                <a className="" onClick={handleEdit} name='side_a' type='button'>
+                                                    Edit image
+                                                </a>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                                 <button type="button" name="next" className="btn btn-primary next action-button float-end" value="Submit" onClick={handlePeticion} >Submit</button>

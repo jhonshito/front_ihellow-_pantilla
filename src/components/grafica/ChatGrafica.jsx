@@ -20,24 +20,26 @@ const ChatGrafica = ({fechas, idLanding}) => {
 
     const [dataGrafica, setDataGrafica] = useState();
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            setIsLoading(true); // Mostrar el loading
-            const res = await grafica({
-              id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
-              fechaInicial: fechas?.fechaInicial,
-              fechaFinal: fechas?.fechaFinal
-            });
-            // console.log(res)
-            setDataGrafica(res);
-          } catch (error) {
-            console.log(error);
-          }finally{
-            setIsLoading(false); // Ocultar el loading
-          }
-        };
+    const fetchData = async () => {
+      try {
+        setIsLoading(true); // Mostrar el loading
+        const id = useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding;
         
+        const res = await grafica({
+          id_landing: id,
+          fechaInicial: fechas?.fechaInicial,
+          fechaFinal: fechas?.fechaFinal
+        });
+        // console.log(res)
+        setDataGrafica(res);
+      } catch (error) {
+        console.log(error);
+      }finally{
+        setIsLoading(false); // Ocultar el loading
+      }
+    };
+
+    useEffect(() => {
         fetchData();
     }, [fechas?.fechaInicial, fechas?.fechaFinal, idLanding]);
 
@@ -157,9 +159,12 @@ const ChatGrafica = ({fechas, idLanding}) => {
         return <Loader />
     }
 
+    // console.log(dataGrafica)
+
     if (!dataGrafica || dataGrafica?.data?.totalCount === 0) {
         return null; // Retorna un componente vacío si no hay datos
     };
+
 
     // const json = {
     //     total: 100,
@@ -173,19 +178,17 @@ const ChatGrafica = ({fechas, idLanding}) => {
     //     ],
     //     listaDias: ["2023-06-21","2023-06-22","2023-06-23","2023-06-24","2023-06-25","2023-06-26","2023-06-27","2023-06-28"]
     //   }
-    // console.log(dataGrafica)
+    console.log(dataGrafica)
 
   return (
-    <div>
-      <Chart
-            options={chart2?.options}
-            series={chart2?.series}
-            type="line"
-            height="100%"
-            className="sales-chart-02"
-        >
-        </Chart>
-    </div>
+    <Chart
+      options={chart2?.options}
+      series={chart2?.series}
+      type="line"
+      height="100%"
+      className="sales-chart-02"
+    >
+    </Chart>
   )
 }
 
