@@ -73,8 +73,8 @@ function App() {
                 role?.role ?
                 <Route path="/home/company" element={<Company />} />: ''
               }
-              <Route path="/home/landing" element={<Landing />} />
-              <Route path="/home/tarjeta" element={<Tarjeta />} />
+              <Route path="/home/landing" element={<Landing role={role} />} />
+              <Route path="/home/tarjeta" element={<Tarjeta role={role} />} />
               <Route path="/home/perfil" element={<Perfil />} />
             </Route>
           </Routes>

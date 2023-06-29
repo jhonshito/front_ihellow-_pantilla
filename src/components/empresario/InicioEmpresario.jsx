@@ -17,18 +17,13 @@ import { MdOpenInBrowser } from "react-icons/md";
 //router-dom
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-// Redux Selector / Action
-import { useSelector } from "react-redux";
-
-// Import selectors & action from setting store
-import * as SettingSelector from "../../store/setting/selectors";
-
 import moment from "moment";
 
-import { useMetricasMutation, useEstadisticasMutation, useGraficaMutation } from "../../api/apiSplice";
+import { useMetricasMutation, useEstadisticasMutation } from "../../api/apiSplice";
 import Loader from "../loading/Loader";
 
 import { useGetLocalStorange } from "../hooks/sendLocalstorange";
+import ChatGrafica from "../grafica/ChatGrafica";
 
 const InicioEmpresario = ({idLanding, fechas}) => {
 
@@ -36,11 +31,11 @@ const InicioEmpresario = ({idLanding, fechas}) => {
 
   const [metricas] = useMetricasMutation();
   const [estadisticas] = useEstadisticasMutation();
-  const [grafica] = useGraficaMutation();
+  // const [grafica] = useGraficaMutation();
 
   const [datos, setDatos] = useState();
   const [anality, setAnality] = useState();
-  const [dataGrafica, setDataGrafica] = useState();
+  // const [dataGrafica, setDataGrafica] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,27 +77,6 @@ const InicioEmpresario = ({idLanding, fechas}) => {
     fetchData();
   }, [fechas?.fechaInicial, fechas?.fechaFinal, idLanding]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true); // Mostrar el loading
-        const res = await grafica({
-          id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
-          fechaInicial: fechas?.fechaInicial,
-          fechaFinal: fechas?.fechaFinal
-        });
-        console.log(res)
-        setDataGrafica(res);
-      } catch (error) {
-        console.log(error);
-      }finally{
-        setIsLoading(false); // Ocultar el loading
-      }
-    };
-    
-    fetchData();
-  }, [fechas?.fechaInicial, fechas?.fechaFinal, idLanding])
-
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -110,145 +84,9 @@ const InicioEmpresario = ({idLanding, fechas}) => {
     if(!data) return navigate('/')
   }, [])
 
-  useSelector(SettingSelector.theme_color);
-
-  const getVariableColor = () => {
-    let prefix =
-      getComputedStyle(document.body).getPropertyValue("--prefix") || "bs-";
-    if (prefix) {
-      prefix = prefix.trim();
-    }
-    const color1 = getComputedStyle(document.body).getPropertyValue(
-      `--${prefix}primary`
-    );
-    const color2 = getComputedStyle(document.body).getPropertyValue(
-      `--${prefix}secondary`
-    );
-    const color3 = getComputedStyle(document.body).getPropertyValue(
-      `--${prefix}primary-tint-20`
-    );
-    const color4 = getComputedStyle(document.body).getPropertyValue(
-      `--${prefix}warning`
-    );
-    const color5 = getComputedStyle(document.body).getPropertyValue(
-      `--${prefix}tertiray`
-    );
-    const color6 = getComputedStyle(document.body).getPropertyValue(
-      `--${prefix}success`
-    );
-    return {
-      primary: color1.trim(),
-      secondary: color2.trim(),
-      primary_light: color3.trim(),
-      warning: color4.trim(),
-      tertiray: color5.trim(),
-      success: color6.trim(),
-    };
-  };
-
-  const variableColors = getVariableColor();
-  const colors = [
-    variableColors.primary,
-    variableColors.secondary,
-    variableColors.tertiray,
-    variableColors.warning,
-    variableColors.primary_light,
-    variableColors.success
-  ];
-
-  useEffect(() => {
-      return () => colors;
-  },[]);
-
-  const json = {
-    total: 100,
-    arrayData: [
-      { name: "facebook", data: [16,12,0,0,0] },
-      { name: "whatsapp", data: [9,44,5,66,2,4,]},
-      { name: "contacto", data: [13,23,21,45,6,67,]},
-      { name: "instagram", data: [2,5,33,65,55,95,5]},
-      { name: "guardar contacto", data: [9,34,15,66,2,4,]},
-      { name: "apertura", data: [89,35,43,65,25,35,5] },
-    ],
-  }
-
-  // Definir las fechas de inicio y fin
-  const fechaInicio = moment(fechas?.fechaInicial || new Date, 'YYYY/MM/DD');
-  const fechaFin = moment(fechas?.fechaFinal || new Date, 'YYYY/MM/DD');
-
-  // Crear una matriz para almacenar los días
-  const listaDias = [];
- 
-  // Iterar a través de las fechas y agregarlas a la matriz
-  for (let fecha = fechaInicio; fecha.isSameOrBefore(fechaFin); fecha.add(1, 'day')) {
-    listaDias.push(fecha.format('YYYY/MM/DD'));
-  }
-
   if(isLoading){
     return <Loader />
   }
-
-  const chart2 = {
-    options: {
-      chart: {
-        toolbar: {
-         show: false,
-        },
-      },
-    colors: colors,
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 3,
-    },
-    legend: {
-      show: false,
-    },
-    grid: {
-      show: true,
-      strokeDashArray: 7,
-    },
-    forecastDataPoints: {
-      count: 3,
-    },
-    markers: {
-      size: 6,
-      colors: "#FFFFFF",
-      strokeColors: colors,
-      strokeWidth: 2,
-      strokeOpacity: 0.9,
-      strokeDashArray: 0,
-      fillOpacity: 0,
-      shape: "circle",
-      radius: 2,
-      offsetX: 0,
-      offsetY: 0,
-    },
-    xaxis: {
-      categories: listaDias,
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
-    },
-    yaxis: {
-      max: json.total // Establecer el valor máximo deseado
-    },
-    },
-    series: json?.arrayData.map((item) => {
-      return {
-        name: item.name,
-        data: item.data
-      };
-    }),
-  };
-
 
   return (
     <Fragment>
@@ -323,13 +161,7 @@ const InicioEmpresario = ({idLanding, fechas}) => {
               </div>
             </Card.Header>
             <Card.Body>
-              <Chart
-                options={chart2.options}
-                series={chart2.series}
-                type="line"
-                height="100%"
-                className="sales-chart-02"
-              ></Chart>
+              <ChatGrafica fechas={fechas} idLanding={idLanding} />
             </Card.Body>
           </Card>
         </Col>

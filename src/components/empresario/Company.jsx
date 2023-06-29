@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react'
 
 //react-bootstrap
-import { Row, Col, Form, Image, Button } from 'react-bootstrap'
+import { Row, Col, Form, Image, Button, Alert } from 'react-bootstrap'
 
 //components
 import Card from '../bootstrap/card'
 
 //router
 import { Link } from 'react-router-dom'
+
+// react-toastify para los mensajes de validación
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // img
 import imgsuccess from '../../assets/images/pages/img-success.png'
@@ -97,16 +101,35 @@ const Company = () => {
 
     const handlePeticion = async() => {
 
-        AccountShow('Image')
 
         const {name, identify,phones,addresses,country,city,pagina_web,linkendin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company} = datos
 
         const logo = useGetLocalStorange('logo_company');
+        const id = data?.result?.id;
+        console.log(id)
 
         try {
-            const res = await update_company_card({name, identify,phones,addresses,country,city,pagina_web,linkendin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company: logo_company || logo});
+            const res = await update_company_card({id_company: id, name, identify, phones, addresses, country, city, pagina_web, linkendin, instagram, facebook, twitter, tiktok, canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,recomendacion_card, logo_company: logo || logo_company});
 
             console.log(res)
+            const { data, error } = res;
+            
+            if(error?.status == 400){
+                toast.warn(error?.data?.mensaje, {
+                    position: toast.POSITION.TOP_CENTER
+                })
+            }
+
+            if(data?.status == 404){
+                toast.warn(data?.mensaje, {
+                    position: toast.POSITION.TOP_CENTER
+                })
+            }
+            // AccountShow('Image')
+
+            data?.status == 200 ? AccountShow('Image') :
+            console.log(res)
+
         } catch (error) {
             console.log(error)
         }
@@ -126,6 +149,23 @@ const Company = () => {
   return (
     <Row>
             <Col sm="12" lg="12">
+            {
+                data?.result?.complete ? 
+                <Alert variant="alert alert-primary " className="d-flex align-items-center" role="alert">
+                    <svg className="bi flex-shrink-0 me-2" width="24" height="24">
+                    </svg>
+                    <div>
+                         Your data is up to date you can change it whenever you want (Optional).
+                    </div>
+                </Alert>:
+                <Alert variant="alert alert-danger" className="d-flex align-items-center" role="alert">
+                    <svg className="bi flex-shrink-0 me-2" width="24" height="24">
+                    </svg>
+                    <div>
+                        You must enter the data of your landing (Required).
+                    </div>
+                </Alert>
+            }
                 <Card>
                     <Card.Header className="d-flex justify-content-between">
                         <div className="header-title">
@@ -205,7 +245,7 @@ const Company = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Phones: *</label>
-                                                <input type="text" className="form-control" name="phone" value={datos?.phones} onChange={handleChange}  placeholder="Phone" />
+                                                <input type="text" className="form-control" name="phones" value={datos?.phones} onChange={handleChange}  placeholder="Phone" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
@@ -375,6 +415,7 @@ const Company = () => {
                                         <div className="col-3"> <Image src={imgsuccess} className="img-fluid" alt="fit-image" /> </div>
                                     </div>
                                     <br /><br />
+                                    <Button type="button" name="previous" className="btn btn-dark previous action-button-previous float-end me-1" value="Previous" onClick={() => AccountShow('A')} >Previous</Button>
                                     <div className="row justify-content-center">
                                         <div className="col-7 text-center">
                                             <h5 className="purple-text text-center">You Have Successfully Signed Up</h5>
@@ -386,6 +427,7 @@ const Company = () => {
                     </Card.Body>
                 </Card>
             </Col>
+            <ToastContainer />
     </Row>
   )
 }

@@ -22,6 +22,8 @@ const options = [
   { value: "30", label: "Past 30 Days" },
 ];
 
+import { useSendLocalStorange } from "../hooks/sendLocalstorange";
+
 const Empresario = ({setIdLanding, setFecha}) => {
 
   const [isLoading, setIsLoading] = useState(true);
@@ -90,7 +92,15 @@ const Empresario = ({setIdLanding, setFecha}) => {
   };
 
   const handleValue = (event) => {
-    setSelectedOption(event)
+    setSelectedOption(event);
+    console.log(event)
+    const userSelect = {
+      id_user: event?.value2,
+      id_card: event?.value3,
+      id_landing: event?.value
+    }
+    useSendLocalStorange('dataUserSelect', userSelect)
+    console.log(selectedOption);
     setIdLanding(event.value)
     if(event){
       localStorage.setItem('idLanding', JSON.stringify(event.value))
@@ -109,6 +119,7 @@ const Empresario = ({setIdLanding, setFecha}) => {
           setDatos(res?.data?.cards)
           localStorage.setItem('idLanding', JSON.stringify(res?.data?.cards[0]?.id_landing));
           setSelectedOption(res?.data?.cards[0]);
+          useSendLocalStorange('dataUserSelect', res?.data?.cards[0])
         }
       } catch (error) {
         console.log(error);
@@ -122,6 +133,8 @@ const Empresario = ({setIdLanding, setFecha}) => {
 
   const opciones = datos?.map(item => ({
       value: item?.id_landing,
+      value2: item?.id_user,
+      value3: item?.id_card,
       label: item?.names,
       imagen: item?.logo == 'userdemo.png' ? avatar1 : item?.logo
   }));
@@ -205,7 +218,7 @@ const Empresario = ({setIdLanding, setFecha}) => {
           </div>
             {
               location.pathname === '/home' ?
-              <InicioEmpresario idLanding={selectedOption.value} fechas={fechas} />: ''
+              <InicioEmpresario idLanding={selectedOption?.value} fechas={fechas} />: ''
             }
           <Suspense fallback="loading">
               <Outlet></Outlet>

@@ -84,17 +84,20 @@ export const apiSplice = createApi({
 
         // trae los datos de la card
         lista_card_by_id: buider.query({
-            query: ({id}) => `listCardById/${id}`
+            query: ({id}) => `listCardById/${id}`,
+            providesTags:['list_card']
         }),
 
         // trae los datos de la landing
         lista_landing_by_id: buider.query({
-            query: ({id}) => `listLandingById/${id}`
+            query: ({id}) => `listLandingById/${id}`,
+            providesTags:['list_landing']
         }),
 
         // trae los datos del company 
         lista_company_by_id: buider.query({
-            query: ({id}) => `dataCompanyByInd/${id}`
+            query: ({id}) => `dataCompanyByInd/${id}`,
+            providesTags:['list_company']
         }),
 
         // agrego las imagenes de la card
@@ -112,27 +115,30 @@ export const apiSplice = createApi({
                 url: 'update_card',
                 method: 'PUT',
                 body: {id_card, title, addresses, side_a, side_b, logo_card, qr}
-            })
+            }),
+            invalidatesTags:['list_card']
         }),
 
         // actualiza la landing
         update_landing: buider.mutation({
-            query: ({alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+            query: ({id_landing,alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
             recomendacion_card}) => ({
                 url: 'update_landing',
                 method: 'PUT',
-                body: {alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
+                body: {id_landing,alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
                 recomendacion_card}
-            })
+            }),
+            invalidatesTags:['list_landing']
         }),
 
         // actualizo los datos de la card company
         update_company_card: buider.mutation({
-            query: ({name,identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}) => ({
+            query: ({id_company,name,identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}) => ({
                 url: 'update_company_card',
                 method: 'PUT',
-                body: {name, identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}
-            })
+                body: {id_company,name,identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}
+            }),
+            invalidatesTags:['list_company']
         }),
 
         // subo el logo de la card company
