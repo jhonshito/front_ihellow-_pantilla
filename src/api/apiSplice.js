@@ -121,12 +121,10 @@ export const apiSplice = createApi({
 
         // actualiza la landing
         update_landing: buider.mutation({
-            query: ({id_landing,alias, url, seo, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
-            recomendacion_card}) => ({
+            query: ({id_landing,alias, url, seo, parameter}) => ({
                 url: 'update_landing',
                 method: 'PUT',
-                body: {id_landing,alias, url, seo, pagina_web, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
-                recomendacion_card}
+                body: {id_landing,alias, url, seo, parameter}
             }),
             invalidatesTags:['list_landing']
         }),

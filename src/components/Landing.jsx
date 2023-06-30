@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // img
 import imgsuccess from '../assets/images/pages/img-success.png'
-import { useGetLocalStorange } from "./hooks/sendLocalstorange";
+import { useGetLocalStorange, useSendLocalStorange } from "./hooks/sendLocalstorange";
 import { useLista_landing_by_idQuery, useUpdate_landingMutation } from "../api/apiSplice";
 import Loader from './loading/Loader'
 
@@ -24,35 +24,30 @@ const Landing = ({role}) => {
     const id = role?.role ? useGetLocalStorange('dataUserSelect')?.id_landing: useGetLocalStorange('data')?.id_landing || useGetLocalStorange('idLanding');
     const { data, isLoading, error } = useLista_landing_by_idQuery({ id });
     const [ update_landing ] = useUpdate_landingMutation();
+
     const [datos, setDatos] = useState({
         alias: data?.result?.alias || '',
         url: data?.result?.url || '',
         seo: data?.result?.url || '',
-        linkedin: '',
-        instagram: '',
-        facebook: '',
-        twitter: '',
-        tiktok: '',
-        canal_youtube: '',
-        enlace1: '',
-        enlace2: '',
-        enlace3: '',
-        ciudad: '',
-        barrio: '',
-        direccion: '',
-        recomendacion_card: ''
+        linkedin: data?.result?.parameters?.links?.linkedin,
+        instagram: data?.result?.parameters?.links?.instagram,
+        facebook: data?.result?.parameters?.links?.facebook,
+        twitter: data?.result?.parameters?.links?.twitter,
+        tiktok: data?.result?.parameters?.links?.tiktok,
+        youtube: data?.result?.parameters?.links?.youtube,
+        enlace1: data?.result?.parameters?.links?.enlace1,
+        enlace2: data?.result?.parameters?.links?.enlace2,
+        enlace3: data?.result?.parameters?.links?.enlace3,
+        ciudad: data?.result?.parameters?.links?.ciudad,
+        barrio: data?.result?.parameters?.links?.barrio,
+        direccion: data?.result?.parameters?.links?.direccion,
+        recomendacion_card: data?.result?.parameters?.links?.recomendacion_card
+        
     });
+
 
     const [show, AccountShow] = useState('A');
 
-    useEffect(() => {
-        setDatos((prevDatos) => ({
-          ...prevDatos,
-          alias: data?.result?.alias || '',
-          url: data?.result?.url || '',
-          seo: data?.result?.seo || ''
-        }));
-    }, [data]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -60,8 +55,55 @@ const Landing = ({role}) => {
           ...prevDatos,
           [name]: value
         }));
+
+        console.log(name, value)
+        // setParameter((prevDatos) => ({
+        //     ...prevDatos,
+        //     [name]: value
+        // }));
+
+        // Buscar si ya existe un objeto con el mismo nombre en el arreglo
+        // const existingDataIndex = formArray.findIndex((data) => data.name === name);
+
+        // if (existingDataIndex !== -1) {
+        //   // Si existe, actualizar el valor en el objeto existente
+        //   const updatedData = { ...formArray[existingDataIndex], url: value };
+        //   const updatedArray = [...formArray];
+        //   updatedArray[existingDataIndex] = updatedData;
+        //   setFormArray(updatedArray);
+        // } else {
+        //   // Si no existe, agregar un nuevo objeto al arreglo
+        //   const newData = {
+        //     name: name, // Nombre personalizado
+        //     url: value // Valor del input
+        //   };
+        //   setFormArray([...formArray, newData]);
+        // }
     };
 
+    useEffect(() => {
+        setDatos((prevDatos) => ({
+            ...prevDatos,
+            alias: data?.result?.alias || '',
+            url: data?.result?.url || '',
+            seo: data?.result?.url || '',
+            linkedin: data?.result?.parameters?.links?.linkedin || '',
+            instagram: data?.result?.parameters?.links?.instagram || '',
+            facebook: data?.result?.parameters?.links?.facebook || '',
+            twitter: data?.result?.parameters?.links?.twitter || '',
+            tiktok: data?.result?.parameters?.links?.tiktok || '',
+            youtube: data?.result?.parameters?.links?.youtube || '',
+            enlace1: data?.result?.parameters?.links?.enlace1 || '',
+            enlace2: data?.result?.parameters?.links?.enlace2 || '',
+            enlace3: data?.result?.parameters?.links?.enlace3 || '',
+            ciudad: data?.result?.parameters?.links?.ciudad || '',
+            barrio: data?.result?.parameters?.links?.barrio || '',
+            direccion: data?.result?.parameters?.links?.direccion || '',
+            recomendacion_card: data?.result?.parameters?.links?.recomendacion_card || ''
+          }));
+    }, [data])
+
+   
     const handelNext = () => {
         if(datos.alias && datos.url && datos.seo){
             AccountShow('Account')
@@ -73,13 +115,26 @@ const Landing = ({role}) => {
 
         const id_landing = role?.role ? idLanding: useGetLocalStorange('data')?.id_landing;
 
-        const {alias, url, seo, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
-        recomendacion_card} = datos;
-        console.log(id_landing)
+        const {alias, url, seo} = datos;
+
+        const formArray = [
+            { name: 'linkedin', url: datos?.linkedin },
+            { name: 'instagram', url: datos?.instagram },
+            { name: 'facebook', url: datos?.facebook },
+            { name: 'twitter', url: datos?.twitter },
+            { name: 'tiktok', url: datos?.tiktok },
+            { name: 'youtube', url: datos?.youtube },
+            { name: 'enlace1', url: datos?.enlace1 },
+            { name: 'enlace2', url: datos?.enlace2 },
+            { name: 'enlace3', url: datos?.enlace3 },
+            { name: 'ciudad', url: datos?.ciudad },
+            { name: 'barrio', url: datos?.barrio },
+            { name: 'direccion', url: datos?.direccion },
+            { name: 'recomendacion_card', url: datos?.recomendacion_card }
+        ]
 
         try {
-            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, linkedin, instagram, facebook, twitter, tiktok,canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,
-            recomendacion_card});
+            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, parameter: formArray});
 
             const { data, error } = res;
             
@@ -114,6 +169,7 @@ const Landing = ({role}) => {
         return <div>Error: {error.message}</div>; // Manejo de error
     }
 
+    console.log(data)
 
   return (
     <Row>
@@ -226,61 +282,61 @@ const Landing = ({role}) => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">LinkedIn</label>
-                                                <input type="text" className="form-control" name="linkedin" onChange={handleChange} placeholder="Ingresa tu LinkedIn" />
+                                                <input type="text" className="form-control" name="linkedin" value={datos?.linkedin} onChange={handleChange} placeholder="Ingresa tu LinkedIn" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Instagram</label>
-                                                <input type="text" className="form-control" name="instagram" onChange={handleChange} placeholder="Ingresa tu Instagram" />
+                                                <input type="text" className="form-control" name="instagram" value={datos?.instagram} onChange={handleChange} placeholder="Ingresa tu Instagram" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Facebook</label>
-                                                <input type="text" className="form-control" name="facebook" onChange={handleChange} placeholder="Ingresa tu Facebook" />
+                                                <input type="text" className="form-control" name="facebook" value={datos?.facebook} onChange={handleChange} placeholder="Ingresa tu Facebook" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Twitter</label>
-                                                <input type="text" className="form-control" name="twitter" onChange={handleChange} placeholder="Ingresa tu Twitter" />
+                                                <input type="text" className="form-control" name="twitter" value={datos?.twitter} onChange={handleChange} placeholder="Ingresa tu Twitter" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">TikTok</label>
-                                                <input type="text" className="form-control" name="tiktok" onChange={handleChange} placeholder="Ingresa tu TikTok" />
+                                                <input type="text" className="form-control" name="tiktok" value={datos?.tiktok} onChange={handleChange} placeholder="Ingresa tu TikTok" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Youtube</label>
-                                                <input type="text" className="form-control" name="canal_youtube" onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
+                                                <input type="text" className="form-control" name="youtube" value={datos?.youtube} onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="enlace1" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace1" value={datos?.enlace1} onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="enlace2" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace2" value={datos?.enlace2} onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="enlace3" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace3" value={datos?.enlace3} onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Tu Ciudad de Entrega: *</label>
-                                                <select name="ciudad" className="form-control" onChange={handleChange}>
+                                                <select value={datos?.ciudad} name="ciudad" className="form-control" onChange={handleChange}>
                                                     <option value="" disabled selected hidden>Selecciona una opción.</option>
                                                     <option value="bogota">Bogota</option>
                                                     <option value="cali">Cali</option>
@@ -291,19 +347,19 @@ const Landing = ({role}) => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Barrio de Entrega</label>
-                                                <input type="text" className="form-control" name="barrio" onChange={handleChange} placeholder="Ingresa tu barrio" />
+                                                <input type="text" className="form-control" name="barrio" value={datos?.barrio} onChange={handleChange} placeholder="Ingresa tu barrio" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Dirección de Entrega</label>
-                                                <input type="text" className="form-control" name="direccion" onChange={handleChange} placeholder="Ingresa tu Dirección" />
+                                                <input type="text" className="form-control" name="direccion" value={datos?.direccion} onChange={handleChange} placeholder="Ingresa tu Dirección" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label className="form-label">Tu tarjeta tendrá de manera obligatoria el QR. Dinos qué deseas que aparezca en tu Tarjeta Impresa: *</label>
-                                                <select name="recomendacion_card" onChange={handleChange} className="form-control">
+                                                <label className="form-label">Tu tarjeta tendrá de manera obligatoria el QR. Dinos qué deseas que aparezca en tu Tarjeta Impresa: *</label> 
+                                                <select name="recomendacion_card" value={datos?.recomendacion_card} onChange={handleChange} className="form-control">
                                                     <option value="" disabled selected hidden>Selecciona una opción.</option>
                                                     <option value="logo">Tu Logo (Recomendable)</option>
                                                     <option value="marca">Tu Nombre o Marca Personal (Recomendable si tu logo no cuenta con tu nombre)</option>
