@@ -15,6 +15,7 @@ import { GiCardPick } from "react-icons/gi";
 import { MdOutlineWebAsset } from "react-icons/md";
 import { BsPersonBoundingBox } from "react-icons/bs";
 import CompanyIcon from "../../../assets/company.png";
+import { AiFillEdit } from "react-icons/ai";
 
 import React from 'react'
 
@@ -106,7 +107,7 @@ const VerticalNav = () => {
           >
             <OverlayTrigger
               placement="right"
-              overlay={<Tooltip>Date</Tooltip>}
+              overlay={<Tooltip>Data</Tooltip>}
             >
               <i className="icon">
                 <svg
@@ -195,6 +196,27 @@ const VerticalNav = () => {
             </Link>: ''
           }
           <hr className="hr-horizontal" />
+          {
+            datos?.role == true ?
+            <Link
+              className={`${
+                location.pathname === "/home/editcard" ? "active" : ""
+              } nav-link `}
+              aria-current="page"
+              to={"/home/editcard"}
+            >
+              <OverlayTrigger
+                placement="right"
+                overlay={<Tooltip>Edit user</Tooltip>}
+              >
+                <i className="icon">
+                  <AiFillEdit className="icon-20" />
+                </i>
+              </OverlayTrigger>
+              <span className="item-name">Edit user</span>
+            </Link>: ''
+          }
+          {' '}
           <Link
             className={`${
               location.pathname === "/home/perfil" ? "active" : ""

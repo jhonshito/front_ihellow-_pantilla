@@ -6,7 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // icons
-import { AiFillFacebook, AiOutlineWhatsApp, AiFillInstagram, AiFillYoutube } from "react-icons/ai";
+import { AiFillFacebook, AiOutlineWhatsApp, AiFillInstagram, AiFillYoutube, AiFillLinkedin } from "react-icons/ai";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { MdOpenInBrowser } from "react-icons/md";
@@ -43,7 +43,7 @@ const Data = ({idLanding, fechaFiltro}) => {
         };
       
         fetchData();
-    }, [fechaFiltro?.fechaInicial, fechaFiltro?.fechaFinal, idLanding])
+    }, [fechaFiltro, idLanding])
 
     if(isLoading){
       return <Loader />
@@ -73,10 +73,25 @@ const Data = ({idLanding, fechaFiltro}) => {
                         <tr key={item?.id}>
                           <td className="text-dark">{newIndex}</td>
                           <td className="text-dark">
-                          <div className="bg-soft-primary avatar-60 rounded">
+                          <div className="avatar-60 rounded" style={{
+                            backgroundColor: item?.name_event === 'facebook' ? '#e8f0fe' :
+                            item?.name_event === 'whatsapp' ? 'rgba(37, 211, 102, 0.1)' :
+                            item?.name_event === 'instagram' ? 'rgba(193, 53, 132, 0.1)' :
+                            item?.name_event === 'guardar contacto' ? 'rgba(128, 128, 128, 0.1)' :
+                            item?.name_event === 'linkedin' ? 'rgba(14, 118, 168, 0.1)' :
+                            item?.name_event === 'apertura' ? 'rgba(255, 87, 51, 0.1)' :
+                            '#e8f0fe',
+                            color: item?.name_event === 'facebook' ? '#3b5998' :
+                            item?.name_event === 'whatsapp' ? '#25D366' : // Por ejemplo, se asigna color blanco para Whatsapp
+                            item?.name_event === 'instagram' ? '#C13584' :
+                            item?.name_event === 'guardar contacto' ? 'grey' :
+                            item?.name_event === 'linkedin' ? '#0e76a8' :
+                            item?.name_event === 'apertura' ? '#ff5733' :
+                            'text-tertiray' // Color de texto predeterminado
+                          }}>
                           {
                             item?.name_event == 'facebook' ?
-                            <AiFillFacebook className="icon-35" />: item?.name_event == 'whatsapp'? <AiOutlineWhatsApp className="icon-35" />: item?.name_event == 'instagram'? <AiFillInstagram className="icon-35" />: item?.name_event == 'youtube'? <AiFillYoutube className="icon-35" />: item?.name_event == 'guardar contacto' ? <BsPersonFillAdd className="icon-35" />: item?.name_event == 'apertura' ? <MdOpenInBrowser className="icon-35" />: <CgWebsite className="icon-35" />
+                            <AiFillFacebook style={{color: '#3b5998'}} className="icon-35" />: item?.name_event == 'whatsapp'? <AiOutlineWhatsApp style={{color: '#25D366'}} className="icon-35" />: item?.name_event == 'instagram'? <AiFillInstagram style={{color: '#C13584'}} className="icon-35" />: item?.name_event == 'youtube'? <AiFillYoutube className="icon-35" />: item?.name_event == 'guardar contacto' ? <BsPersonFillAdd style={{color: 'grey'}} className="icon-35" />: item?.name_event == 'apertura' ? <MdOpenInBrowser style={{color: '#ff5733'}} className="icon-35" />: item?.name_event == 'linkedin'?<AiFillLinkedin style={{color: '#0e76a8'}} className="icon-35" />: <CgWebsite className="icon-35" />
                           }
                         </div>
                           </td>

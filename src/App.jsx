@@ -32,6 +32,7 @@ import Perfil from "./components/auth/Perfil";
 import Landing from "./components/Landing";
 import DataFilter from "./components/emprendedor/DataFilter";
 import Company from "./components/empresario/Company";
+import EditCard from "./components/empresario/EditCard";
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
                       <Route path="/home/dataEmpresario" element={<Data idLanding={idLanding} fechaFiltro={fecha} />} />
                       <Route path="/home/landing" element={<Landing role={role} idLanding={idLanding} />} />
                       <Route path="/home/tarjeta" element={<Tarjeta role={role} idUser={idUser} />} />
+                      <Route path="/home/editcard" element={<EditCard role={role} idUser={idUser} />} />
                     </Route>
                   </>
                 ): (
@@ -76,7 +78,7 @@ function App() {
               }
               {
                 role?.role ?
-                <Route path="/home/company" element={<Company />} />: ''
+                  <Route path="/home/company" element={<Company />} />: ''
               }
               
               <Route path="/home/perfil" element={<Perfil />} />

@@ -172,7 +172,7 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
           <p>No hay opciones disponibles.</p>
         )}
         {
-          location.pathname == '/home/tarjeta' ? '': location.pathname == '/home/landing' ? '':
+          location.pathname == '/home/tarjeta' ? '': location.pathname == '/home/landing' ? '': location.pathname == '/home/editcard' ? '':
           <div className="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3 mt-5">
           <div className="d-flex flex-column">
             <h3>Quick Insights</h3>

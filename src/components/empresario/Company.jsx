@@ -31,20 +31,20 @@ const Company = () => {
         addresses: data?.result?.addresses || '',
         country: data?.result?.country || '',
         city: data?.result?.city || '',
-        pagina_web: '',
-        linkedin: '',
-        instagram: '',
-        facebook: '',
-        twitter: '',
-        tiktok: '',
-        canal_youtube: '',
-        enlace1: '',
-        enlace2: '',
-        enlace3: '',
-        ciudad: '',
-        barrio: '',
-        direccion: '',
-        recomendacion_card: '',
+        pagina_web: data?.result?.parameters?.pagina_web || '',
+        linkedin: data?.result?.parameters?.linkedin || '',
+        instagram: data?.result?.parameters?.instagram || '',
+        facebook: data?.result?.parameters?.facebook || '',
+        twitter: data?.result?.parameters?.twitter || '',
+        tiktok: data?.result?.parameters?.tiktok || '',
+        youtube: data?.result?.parameters?.youtube || '',
+        enlace1: data?.result?.parameters?.enlace1 || '',
+        enlace2: data?.result?.parameters?.enlace2 || '',
+        enlace3: data?.result?.parameters?.enlace3 || '',
+        ciudad: data?.result?.parameters?.ciudad || '',
+        barrio: data?.result?.parameters?.barrio || '',
+        direccion: data?.result?.parameters?.direccion || '',
+        recomendacion_card: data?.result?.parameters?.recomendacion_card || '',
         logo_company: useGetLocalStorange('logo_company') || 'logo_company'
     });
     const [logo, setLogo] = useState(false);
@@ -60,6 +60,20 @@ const Company = () => {
             addresses: data?.result?.addresses || '',
             country: data?.result?.country || '',
             city: data?.result?.city || '',
+            pagina_web: data?.result?.parameters?.pagina_web || '',
+            linkedin: data?.result?.parameters?.linkedin || '',
+            instagram: data?.result?.parameters?.instagram || '',
+            facebook: data?.result?.parameters?.facebook || '',
+            twitter: data?.result?.parameters?.twitter || '',
+            tiktok: data?.result?.parameters?.tiktok || '',
+            youtube: data?.result?.parameters?.youtube || '',
+            enlace1: data?.result?.parameters?.enlace1 || '',
+            enlace2: data?.result?.parameters?.enlace2 || '',
+            enlace3: data?.result?.parameters?.enlace3 || '',
+            ciudad: data?.result?.parameters?.ciudad || '',
+            barrio: data?.result?.parameters?.barrio || '',
+            direccion: data?.result?.parameters?.direccion || '',
+            recomendacion_card: data?.result?.parameters?.recomendacion_card || ''
         }));
     }, [data]);
 
@@ -92,25 +106,40 @@ const Company = () => {
     const handleNextOne = () => {
         console.log(datos)
 
-        AccountShow('Account')
-    }
-
-    const handleNextTwo = () => {
-        console.log(datos)
+        // cuando agregue de nuevo el buttons no debe de ser personal si no Account
         AccountShow('Personal')
     }
+
+    // const handleNextTwo = () => {
+    //     console.log(datos)
+    //     AccountShow('Personal')
+    // }
 
     const handlePeticion = async() => {
 
 
-        const {name, identify,phones,addresses,country,city,pagina_web,linkendin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company} = datos
+        const {name, identify,phones,addresses,country,city, logo_company} = datos
+
+        const formArray = [
+            {name: 'pagina_web', url: datos?.pagina_web},
+            { name: 'linkedin', url: datos?.linkedin },
+            { name: 'instagram', url: datos?.instagram },
+            { name: 'facebook', url: datos?.facebook },
+            { name: 'twitter', url: datos?.twitter },
+            { name: 'tiktok', url: datos?.tiktok },
+            { name: 'youtube', url: datos?.youtube },
+            { name: 'enlace1', url: datos?.enlace1 },
+            { name: 'enlace2', url: datos?.enlace2 },
+            { name: 'enlace3', url: datos?.enlace3 },
+            { name: 'recomendacion_card', url: datos?.recomendacion_card }
+        ]
 
         const logo = useGetLocalStorange('logo_company');
         const id = data?.result?.id;
         console.log(id)
 
         try {
-            const res = await update_company_card({id_company: id, name, identify, phones, addresses, country, city, pagina_web, linkendin, instagram, facebook, twitter, tiktok, canal_youtube, enlace1, enlace2, enlace3, ciudad, barrio, direccion,recomendacion_card, logo_company: logo || logo_company});
+            const res = await update_company_card({id_company: id, name, identify, phones, addresses, country, city, parameter: formArray, logo_company: logo || logo_company});
 
             console.log(res)
             const { data, error } = res;
@@ -150,7 +179,7 @@ const Company = () => {
         return <div>Error: {error.message}</div>; // Manejo de error
     }
 
-    // console.log(data)
+    console.log(data)
 
   return (
     <Row>
@@ -181,7 +210,8 @@ const Company = () => {
                     <Card.Body>
                         <Form id="form-wizard1" className="text-center mt-3">
                             <ul id="top-tab-list" className="p-0 row list-inline">
-                                <li className={` ${show === 'Image' ? ' active done' : ''} ${show === 'Personal' ? ' active done' : ''} ${show === 'Account' ? ' active done' : ''} ${show === 'A' ? 'active' : ''} col-lg-3 col-md-6 text-start mb-2 active`} id="account">
+                                {/* ${show === 'Personal' ? ' active done' : ''} esto debe de ir si vuelvo a poner buttons va despues de Imagen */}
+                                <li className={` ${show === 'Image' ? ' active done' : ''} ${show === 'Account' ? ' active done' : ''} ${show === 'A' ? 'active' : ''} col-lg-3 col-md-6 text-start mb-2 active`} id="account">
                                     <Link to="#">
                                         <div className="iq-icon me-3">
                                             <svg className="icon-20 svg-icon" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -192,8 +222,9 @@ const Company = () => {
                                         <span>Setting</span>
                                     </Link>
                                 </li>
-                                <li id="personal" className={`${show === 'Personal' ? ' active done' : ''} ${show === 'Image' ? ' active done' : ''} ${show === 'Account' ? 'active ' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
-                                    <Link to="#">
+                                {/* ${show === 'Personal' ? ' active done' : ''}  esto tambien debe de ir va de primero */}
+                                <li id="personal" className={` ${show === 'Image' ? ' active done' : ''} ${show === 'Account' ? 'active ' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
+                                    {/* <Link to="#">
                                         <div className="iq-icon me-3">
                                             <svg className="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M11.997 15.1746C7.684 15.1746 4 15.8546 4 18.5746C4 21.2956 7.661 21.9996 11.997 21.9996C16.31 21.9996 19.994 21.3206 19.994 18.5996C19.994 15.8786 16.334 15.1746 11.997 15.1746Z" fill="currentColor"></path>
@@ -201,7 +232,7 @@ const Company = () => {
                                             </svg>
                                         </div>
                                         <span>Buttons</span>
-                                    </Link>
+                                    </Link> */}
                                 </li>
                                 <li id="payment" className={`${show === 'Image' ? ' active done' : ''} ${show === 'Personal' ? 'active' : ''} col-lg-3 col-md-6 mb-2 text-start`}>
                                     <Link to="#">
@@ -276,7 +307,7 @@ const Company = () => {
                                 </div>
                                 <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={handleNextOne} >Next</Button>
                             </fieldset>
-                            <fieldset className={`${show === 'Account' ? 'd-block' : 'd-none'}`}>
+                            {/* <fieldset className={`${show === 'Account' ? 'd-block' : 'd-none'}`}>
                                 <div className="form-card text-start">
                                     <div className="row">
                                         <div className="col-7">
@@ -290,84 +321,61 @@ const Company = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Página Web.</label>
-                                                <input type="text" className="form-control" name="pagina_web" onChange={handleChange} placeholder="Ingresa tu sitio web" />
+                                                <input type="text" className="form-control" name="pagina_web" value={datos?.pagina_web} onChange={handleChange} placeholder="Ingresa tu sitio web" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">LinkedIn</label>
-                                                <input type="text" name="linkedin" onChange={handleChange}  className="form-control" placeholder="Ingresa tu LinkedIn" />
+                                                <input type="text" name="linkedin" value={datos?.linkedin} onChange={handleChange}  className="form-control" placeholder="Ingresa tu LinkedIn" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Instagram</label>
-                                                <input type="text" className="form-control" name="instagram" onChange={handleChange} placeholder="Ingresa tu Instagram" />
+                                                <input type="text" className="form-control" name="instagram" value={datos?.instagram} onChange={handleChange} placeholder="Ingresa tu Instagram" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Facebook</label>
-                                                <input type="text" className="form-control" name="facebook" onChange={handleChange} placeholder="Ingresa tu Facebook" />
+                                                <input type="text" className="form-control" name="facebook" value={datos?.facebook} onChange={handleChange} placeholder="Ingresa tu Facebook" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Twitter</label>
-                                                <input type="text" className="form-control" name="twitter" onChange={handleChange}  placeholder="Ingresa tu Twitter" />
+                                                <input type="text" className="form-control" name="twitter" value={datos?.twitter} onChange={handleChange}  placeholder="Ingresa tu Twitter" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">TikTok</label>
-                                                <input type="text" className="form-control" name="tiktok" onChange={handleChange} placeholder="Ingresa tu TikTok" />
+                                                <input type="text" className="form-control" name="tiktok" value={datos?.tiktok} onChange={handleChange} placeholder="Ingresa tu TikTok" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Youtube</label>
-                                                <input type="text" className="form-control" name="canal_youtube" onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
+                                                <input type="text" className="form-control" name="youtube" value={datos?.youtube} onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="enlace1" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace1" value={datos?.enlace1} onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="enlace2" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
+                                                <input type="text" className="form-control" name="enlace2" value={datos?.enlace2} onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Enlace Adicional</label>
-                                                <input type="text" className="form-control" name="enlace3" onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Tu Ciudad de Entrega: *</label>
-                                                <select name="ciudad" className="form-control" onChange={handleChange}>
-                                                    <option value="" disabled selected hidden>Selecciona una opción.</option>
-                                                    <option value="bogota">Bogota</option>
-                                                    <option value="cali">Cali</option>
-                                                    <option value="medellin">Medellin</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Barrio de Entrega</label>
-                                                <input type="text" className="form-control" name="barrio" onChange={handleChange} placeholder="Ingresa tu barrio" />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Dirección de Entrega</label>
-                                                <input type="text" className="form-control" name="direccion" onChange={handleChange} placeholder="Ingresa tu Dirección" />
+                                                <input type="text" className="form-control" name="enlace3" value={datos?.enlace3} onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
@@ -385,7 +393,7 @@ const Company = () => {
                                 </div>
                                 <Button type="button" name="next" className="next action-button float-end" value="Next" onClick={handleNextTwo} >Next</Button>
                                 <Button type="button" name="previous" className="btn btn-dark previous action-button-previous float-end me-1" value="Previous" onClick={() => AccountShow('A')} >Previous</Button>
-                            </fieldset>
+                            </fieldset> */}
                             <fieldset className={`${show === 'Personal' ? 'd-block' : 'd-none'}`}>
                                 <div className="form-card text-start">
                                     <div className="row">

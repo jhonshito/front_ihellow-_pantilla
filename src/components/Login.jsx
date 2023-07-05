@@ -77,11 +77,16 @@ const Login = ({setEstado, estado}) => {
 
       try {
          const res = await login({namesuser: formData.username, password: formData.password});
+         const { data, error } = res
          if (res.data.status === 200) {
             const data = res.data.data
-            console.log(data)
-            // localStorage.setItem('data', JSON.stringify(data));
+            //  funcion que guarda en el localstorange
             useSendLocalStorange('data', data);
+            toast.success('¡Éxito!', {
+               position: toast.POSITION.TOP_CENTER,
+               progressClassName: 'bg-primary',
+               // bodyClassName: 'bg-primary'
+            })
             setTimeout(() => {
                setEstado(estado + 1)
                navigate('/home');

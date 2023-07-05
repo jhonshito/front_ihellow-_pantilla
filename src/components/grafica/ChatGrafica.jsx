@@ -30,7 +30,7 @@ const ChatGrafica = ({fechas, idLanding}) => {
           fechaInicial: fechas?.fechaInicial,
           fechaFinal: fechas?.fechaFinal
         });
-        // console.log(res)
+        console.log(res)
         setDataGrafica(res);
       } catch (error) {
         console.log(error);
@@ -41,7 +41,7 @@ const ChatGrafica = ({fechas, idLanding}) => {
 
     useEffect(() => {
         fetchData();
-    }, [fechas?.fechaInicial, fechas?.fechaFinal, idLanding]);
+    }, [fechas, idLanding]);
 
 
     useSelector(SettingSelector.theme_color);
@@ -71,12 +71,13 @@ const ChatGrafica = ({fechas, idLanding}) => {
       `--${prefix}success`
     );
     return {
-      primary: color1.trim(),
-      secondary: color2.trim(),
-      primary_light: color3.trim(),
-      warning: color4.trim(),
-      tertiray: color5.trim(),
-      success: color6.trim(),
+      primary: '#3b5998',
+      secondary: '#3b5998',
+      primary_light: '#25D366',
+      warning: '#0e76a8',
+      tertiray: 'grey',
+      success: '#C13584',
+      oragen: '#ff5733'
     };
   };
 
@@ -87,8 +88,14 @@ const ChatGrafica = ({fechas, idLanding}) => {
     variableColors.tertiray,
     variableColors.warning,
     variableColors.primary_light,
-    variableColors.success
+    variableColors.success,
+    variableColors.oragen
   ];
+
+  const customColors = [...colors];
+  const aperturaIndex = 0; // Índice del dato "apertura" en el array de series
+  const orangeColor = '#ff5733'; // Color "orange" personalizado para "apertura"
+  customColors[aperturaIndex] = orangeColor;
 
   useEffect(() => {
     return () => colors;
@@ -101,7 +108,7 @@ const ChatGrafica = ({fechas, idLanding}) => {
              show: false,
             },
           },
-        colors: colors,
+        colors: customColors,
         dataLabels: {
           enabled: false,
         },
@@ -121,7 +128,7 @@ const ChatGrafica = ({fechas, idLanding}) => {
         markers: {
           size: 6,
           colors: "#FFFFFF",
-          strokeColors: colors,
+          strokeColors: customColors,
           strokeWidth: 3,
           strokeOpacity: 0.9,
           strokeDashArray: 0,
@@ -148,6 +155,12 @@ const ChatGrafica = ({fechas, idLanding}) => {
         },
         },
         series: dataGrafica && dataGrafica?.data && dataGrafica?.data?.data ? dataGrafica?.data?.data?.arrayData?.map((item) => {
+          let color = colors[item.name]; // Obtener el color personalizado según el nombre del dato
+
+          // Si el color personalizado no está definido, usar el color predeterminado
+          if (color) {
+            color = colors[aperturaIndex];
+          }
           return {
             name: item.name,
             data: item.data
@@ -178,7 +191,7 @@ const ChatGrafica = ({fechas, idLanding}) => {
     //     ],
     //     listaDias: ["2023-06-21","2023-06-22","2023-06-23","2023-06-24","2023-06-25","2023-06-26","2023-06-27","2023-06-28"]
     //   }
-    console.log(dataGrafica)
+    // console.log(dataGrafica)
 
   return (
     <Chart

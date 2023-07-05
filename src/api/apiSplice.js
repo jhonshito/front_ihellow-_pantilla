@@ -131,10 +131,10 @@ export const apiSplice = createApi({
 
         // actualizo los datos de la card company
         update_company_card: buider.mutation({
-            query: ({id_company,name,identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}) => ({
+            query: ({id_company,name,identify,phones,addresses,country,city,parameter, logo_company}) => ({
                 url: 'update_company_card',
                 method: 'PUT',
-                body: {id_company,name,identify,phones,addresses,country,city,pagina_web,linkedin,instagram,facebook,twitter,tiktok,canal_youtube,enlace1,enlace2,enlace3,ciudad,barrio,direccion,recomendacion_card, logo_company}
+                body: {id_company,name,identify,phones,addresses,country,city,parameter, logo_company}
             }),
             invalidatesTags:['list_company']
         }),
@@ -146,6 +146,20 @@ export const apiSplice = createApi({
                 method: 'POST',
                 body: formData
             })
+        }),
+
+        // edita los datos del perfil
+        update_profile: buider.mutation({
+            query: ({ id, name, country, phone, city }) => ({
+                url: "update_profile",
+                method: "PUT",
+                body: { id, name, country, phone, city }
+            }),
+            invalidatesTags: ['data']
+        }),
+
+        listCountry: buider.query({
+            query: () => 'https://restcountries.com/v3.1/all'
         })
     })
 });
@@ -167,5 +181,7 @@ export const {
     useUpdateCardMutation,
     useUpdate_landingMutation,
     useUpdate_company_cardMutation,
-    useAdd_logo_companyMutation
+    useAdd_logo_companyMutation,
+    useUpdate_profileMutation,
+    useListCountryQuery
 } = apiSplice
