@@ -21,7 +21,7 @@ const options = [
 ];
 
 
-const DataFilter = ({setDataFecha}) => {
+const DataFilter = ({setDataFecha, role}) => {
 
     const [selectedOption, setSelectedOption] = useState(7);
 
@@ -83,54 +83,64 @@ const DataFilter = ({setDataFecha}) => {
         });
     };
 
+    if(location?.pathname === '/home' || location?.pathname === '/home/data'){
+      console.log(location.pathname)
+    }else {
+      console.log('nooo')
+    }
+
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3">
-        <div className="d-flex flex-column">
-          <h3>Quick Insights</h3>
-          <p className="text-primary mb-0">Financial Dashboard</p>
+      {
+      (location?.pathname === '/home' || location?.pathname === '/home/data') ? (
+        <div className="d-flex' justify-content-between align-items-center flex-wrap mb-4 gap-3">
+          <div className="d-flex flex-column">
+            <h3>Quick Insights</h3>
+            <p className="text-primary mb-0">Financial Dashboard</p>
+          </div>
+          <div className="d-flex justify-content-between align-items-center rounded flex-wrap gap-3">
+            <div
+              className="form-group mb-0 custom-choicejs"
+              style={{ minWidth: "145px" }}
+            >
+              <ChoicesJs
+                options={options}
+                onChange={(event) => {
+                  setSelectedOption(event.target.value);
+                  handleComboFecha(event);
+                }}
+                className="js-choice"
+                select="one"
+                value={selectedOption}
+              />
+            </div>
+
+            <div className="form-group mb-0 ">
+              <Flatpickr
+                options={{ mode: "single", minDate: undefined }}
+                className="form-control range_flatpicker"
+                onChange={handleDateChange}
+                value={dateInicial}
+              />
+            </div>
+            <div className="form-group mb-0 ">
+              <Flatpickr
+                options={{ mode: "single", minDate: undefined }}
+                className="form-control range_flatpicker"
+                placeholder="Fecha final"
+                onChange={handleDateSecond}
+                value={dateFinal}
+              />
+            </div>
+
+            <Button type="button" onClick={handleSubmit} className="primary">
+              Analytics
+            </Button>
+
+          </div>
         </div>
-        <div className="d-flex justify-content-between align-items-center rounded flex-wrap gap-3">
-          <div
-            className="form-group mb-0 custom-choicejs"
-            style={{ minWidth: "145px" }}
-          >
-            <ChoicesJs
-              options={options}
-              onChange={(event) => {
-                setSelectedOption(event.target.value);
-                handleComboFecha(event);
-              }}
-              className="js-choice"
-              select="one"
-              value={selectedOption}
-            />
-          </div>
-
-          <div className="form-group mb-0 ">
-            <Flatpickr
-              options={{ mode: "single", minDate: undefined }}
-              className="form-control range_flatpicker"
-              onChange={handleDateChange}
-              value={dateInicial}
-            />
-          </div>
-          <div className="form-group mb-0 ">
-            <Flatpickr
-              options={{ mode: "single", minDate: undefined }}
-              className="form-control range_flatpicker"
-              placeholder="Fecha final"
-              onChange={handleDateSecond}
-              value={dateFinal}
-            />
-          </div>
-
-          <Button type="button" onClick={handleSubmit} className="primary">
-            Analytics
-          </Button>
-
-        </div>
-      </div>
+      ):null
+      }
       {
         location.pathname === '/home' ?
         <InicioEmpresario fechas={fechas} />: ''

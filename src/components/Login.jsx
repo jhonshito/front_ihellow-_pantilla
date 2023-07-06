@@ -27,6 +27,9 @@ import Logo from "../assets/iHellow-Logo.webp";
 import { useLoginMutation } from "../api/apiSplice";
 import { useSendLocalStorange } from "./hooks/sendLocalstorange";
 
+// firebase
+import { signin, loginWithGoogle } from "./contentFirebase/AuthFirebase";
+
 const Login = ({setEstado, estado}) => {
 
    const navigate = useNavigate();
@@ -76,6 +79,10 @@ const Login = ({setEstado, estado}) => {
       }
 
       try {
+
+         // const response = await signin(formData.username, formData.password);
+         // console.log(response)
+
          const res = await login({namesuser: formData.username, password: formData.password});
          const { data, error } = res
          if (res.data.status === 200) {
@@ -101,6 +108,16 @@ const Login = ({setEstado, estado}) => {
          console.log(error);
       }
 
+   }
+
+   const loginGoogle = async(e) => {
+      e.preventDefault();
+      try {
+         const response = await loginWithGoogle();
+         console.log(response);
+      } catch (error) {
+         console.log(error);
+      }
    }
 
   return (
@@ -137,7 +154,7 @@ const Login = ({setEstado, estado}) => {
                                     <Form.Check.Input type="checkbox" id="customCheck1" />
                                     <Form.Check.Label htmlFor="customCheck1">Remember Me</Form.Check.Label>
                                  </Form.Check>
-                                 <a href='#'>Forgot Password?</a>
+                                 <Link to="/forget">Forgot Password?</Link>
                               </Col>
                            </Row>
                            <div className="d-flex justify-content-center">
@@ -146,7 +163,7 @@ const Login = ({setEstado, estado}) => {
                            <p className="text-center my-3">or sign in with other accounts?</p>
                            <div className="d-flex justify-content-center">
                               <ListGroup as="ul" className="list-group-horizontal list-group-flush">
-                                 <ListGroup.Item as="li" className="border-0 pb-0">
+                                 <ListGroup.Item onClick={loginGoogle} as="li" className="border-0 pb-0">
                                     <a href="#"><Image src={google} alt="gm" /></a>
                                  </ListGroup.Item>
                                  <ListGroup.Item as="li" className="border-0 pb-0">

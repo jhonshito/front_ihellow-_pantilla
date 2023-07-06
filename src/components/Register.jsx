@@ -25,6 +25,9 @@ import Logo from "../assets/iHellow-Logo.webp";
 // redux toolkin
 import { useRegisterMutation } from "../api/apiSplice";
 
+// firebase
+import { signup } from "./contentFirebase/AuthFirebase";
+
 const Register = () => {
 
    // redux toolkit query
@@ -181,7 +184,11 @@ const Register = () => {
 
          try {
             console.log(formData)
-            const res = await register({token: formData.token, email: formData.email, phone: formData.phone, password: formData.password, city: formData.city, country: formData.country, username: concatenacion, });
+            const response = await signup(formData.email, formData.password);
+
+            // console.log(response);
+
+            const res = await register({token: response.user.accessToken || formData.token, email: formData.email, phone: formData.phone, password: formData.password, city: formData.city, country: formData.country, username: concatenacion, });
             if(res.data.status == 400){
                toast.warning(res.data.mensaje, {
                   position: toast.POSITION.TOP_CENTER

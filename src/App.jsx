@@ -33,6 +33,10 @@ import Landing from "./components/Landing";
 import DataFilter from "./components/emprendedor/DataFilter";
 import Company from "./components/empresario/Company";
 import EditCard from "./components/empresario/EditCard";
+import SendEmail from "./components/auth/SendEmail";
+import EmailSuccess from "./components/auth/EmailSuccess";
+import ForgetPass from "./components/auth/ForgetPass";
+import SuccessPass from "./components/auth/SuccessPass";
 
 
 function App() {
@@ -47,7 +51,7 @@ function App() {
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('data'));
     setRole(data)
-  }, [estado])
+  }, [estado, idLanding])
 
   return (
     <BrowserRouter>
@@ -57,6 +61,10 @@ function App() {
             <Route path="/" element={<Login setEstado={setEstado} estado={estado} />} />
             <Route path="/register" element={<Register />} />
             <Route path="/confirm" element={<Confirmacion />} />
+            <Route path="/forget" element={<SendEmail />} />
+            <Route path="/forgetPass/:id" element={<ForgetPass />} />
+            <Route path="/emailSucess" element={<EmailSuccess />} />
+            <Route path="/successPass" element={<SuccessPass />} />
             <Route path="/home" element={<BarraLateral />} >
               {
                 role?.role ? (

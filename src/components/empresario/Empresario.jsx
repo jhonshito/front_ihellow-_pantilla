@@ -30,6 +30,8 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
   const [datos, setDatos] = useState();
   const [selectedOption, setSelectedOption] = useState(null);
 
+  const location = useLocation();
+
   const [dateInicial, setDateInicial] = useState(new Date());
   const [dateFinal, setDateFinal] = useState(new Date());
 
@@ -43,7 +45,6 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
   }, [fechas])
 
   const [cards] = useCards_listMutation();
-  const location = useLocation();
 
   const handleComboFecha = (event) => {
   const evento = event.target.value || new Date();
@@ -143,7 +144,6 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
       return <Loader />
   }
 
-  // console.log(datos)
 
   return (
     <div>
@@ -172,7 +172,7 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
           <p>No hay opciones disponibles.</p>
         )}
         {
-          location.pathname == '/home/tarjeta' ? '': location.pathname == '/home/landing' ? '': location.pathname == '/home/editcard' ? '':
+          location?.pathname == '/home/tarjeta' || location?.pathname == '/home/landing' || location?.pathname == 'home/editcard' ? '':
           <div className="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3 mt-5">
           <div className="d-flex flex-column">
             <h3>Quick Insights</h3>

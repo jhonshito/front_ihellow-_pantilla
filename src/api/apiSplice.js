@@ -121,10 +121,10 @@ export const apiSplice = createApi({
 
         // actualiza la landing
         update_landing: buider.mutation({
-            query: ({id_landing,alias, url, seo, parameter}) => ({
+            query: ({id_landing,alias, url, seo, foto, fondo, parameter}) => ({
                 url: 'update_landing',
                 method: 'PUT',
-                body: {id_landing,alias, url, seo, parameter}
+                body: {id_landing,alias, url, seo, foto, fondo, parameter}
             }),
             invalidatesTags:['list_landing']
         }),
@@ -148,6 +148,15 @@ export const apiSplice = createApi({
             })
         }),
 
+        // subir img de la landing
+        add_img_landing: buider.mutation({
+            query: ({id, formData}) => ({
+                url: `add_img_landing/${id}`,
+                method: 'POST',
+                body: formData
+            })
+        }),
+
         // edita los datos del perfil
         update_profile: buider.mutation({
             query: ({ id, name, country, phone, city }) => ({
@@ -158,8 +167,27 @@ export const apiSplice = createApi({
             invalidatesTags: ['data']
         }),
 
+        // lista de paises
         listCountry: buider.query({
             query: () => 'https://restcountries.com/v3.1/all'
+        }),
+
+        // enviar correo
+        send_email: buider.mutation({
+            query: ({email}) => ({
+                url: "send_email",
+                method: "POST",
+                body: {email}
+            })
+        }),
+
+        //  update password
+        updatePass: buider.mutation({
+            query: ({id, password}) => ({
+                url: "update_pass",
+                method: "PUT",
+                body: { id, password }
+            })
         })
     })
 });
@@ -183,5 +211,8 @@ export const {
     useUpdate_company_cardMutation,
     useAdd_logo_companyMutation,
     useUpdate_profileMutation,
-    useListCountryQuery
+    useListCountryQuery,
+    useSend_emailMutation,
+    useUpdatePassMutation,
+    useAdd_img_landingMutation
 } = apiSplice

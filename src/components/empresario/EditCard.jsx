@@ -26,16 +26,15 @@ const EditCard = ({role, idUser}) => {
     const { data, isLoading, error } = useFind_userQuery({id});
     // useSendLocalStorange('pais', data?.data?.country)
     const { data: dataCount, isLoading: isload, error: isError } = useListCountryQuery();
+    const [estado, setEstado] = useState();
 
     const [profile, setProfile] = useState({
         names: data?.data?.names || '',
         phone: data?.data?.phone || '',
-        country: data?.data?.country || '',
+        country: estado ? estado: data?.data?.country || '',
         city: data?.data?.city || ''
     });
 
-    const [estado, setEstado] = useState();
-    const [selectedOption, setSelectedOption] = useState();
 
     const handleOnChange = (event) => {
         const newValue = event.target.value;
@@ -48,7 +47,7 @@ const EditCard = ({role, idUser}) => {
 
     // capturar country
     const handleSelect = (selectedOption) => {
-        setEstado(selectedOption?.value);
+        setEstado(selectedOption);
         console.log(selectedOption)
     }
 
@@ -56,7 +55,7 @@ const EditCard = ({role, idUser}) => {
         e.preventDefault();
         // traer el id del usuario del localstorange
         const id = useGetLocalStorange('dataUserSelect')?.id_user || idUser;
-        const { names, country, phone, city } = profile;
+        const { names, phone, city } = profile;
     
         try {
           const res = await update_profile({id, name: names, country: estado, phone, city});
@@ -77,37 +76,20 @@ const EditCard = ({role, idUser}) => {
     }
 
     useEffect(() => {
-        setProfile((prevDatos) => ({
-            ...prevDatos,
-            names: data?.data?.names || '',
-            phone: data?.data?.phone || '',
-            country: data?.data?.country || '',
-            city: data?.data?.city || ''
-        }));
-        setEstado(data?.data?.country)
+      setProfile((prevDatos) => ({
+        ...prevDatos,
+        names: data?.data?.names || '',
+        phone: data?.data?.phone || '',
+        country: estado ? estado: data?.data?.country || '',
+        city: data?.data?.city || ''
+      }));
     }, [data, id])
 
 
-    const opciones = dataCount?.map((item, index) => ({
+    const opciones = dataCount?.map((item) => ({
         value: item?.name.common,
-        value2: index,
         label: item.flag,
-        label2: item.name.common
-        // label2:
     }));
-
-    useEffect(() => {
-        // const pais = useGetLocalStorange('pais')
-        const initialCountry = profile?.country;
-        const selected = opciones?.find(option => option?.label2==initialCountry);
-
-        // console.log(pais)
-        if (selected) {
-            setSelectedOption(selected);
-        }else {
-            setSelectedOption(null);
-        }
-    }, [profile?.country, id, opciones?.value]);
 
     if(error){
         return <div>{error.message}</div>
@@ -116,6 +98,7 @@ const EditCard = ({role, idUser}) => {
     if(isLoading){
       return <Loader />
     }
+
 
   return (
     <Card>
@@ -133,15 +116,16 @@ const EditCard = ({role, idUser}) => {
                        <Form.Control type="text" name='names' onChange={handleOnChange} value={profile?.names} id="fname" placeholder="Your  Name" />
                     </Form.Group>
                     <Form.Group className="col-sm-12 form-group">
-                     <Form.Label>Your Country: {selectedOption?.label}  {selectedOption?.label2} </Form.Label>
+                     <Form.Label>Your Country: </Form.Label>
                      <Select 
                         options={opciones}
                         onChange={handleSelect}
-                        defaultValue={selectedOption ? selectedOption: selectedOption}
-                        formatOptionLabel={({ label, label2 }) => (
+                        getOptionValue={(option) => option?.value} // Utiliza 
+                        value={estado ? estado: profile?.country || data?.data?.country}
+                        formatOptionLabel={({ label, value }) => (
                             <div className="d-flex align-items-center gap-3 px-4">
                               <p className="ml-2 mb-0">{label}</p>
-                              <p className="ml-2 mb-0">{label2}</p>
+                              <p className="ml-2 mb-0">{value}</p>
                             </div>
                         )}
                      />

@@ -41,7 +41,7 @@ const Perfil = () => {
 
   // capturar country
   const handleSelect = (selectedOption) => {
-    setEstado(selectedOption?.value);
+    setEstado(selectedOption);
     console.log(selectedOption)
   }
 
@@ -59,7 +59,7 @@ const Perfil = () => {
     const datos = useGetLocalStorange('data');
 
     try {
-      const res = await add_photo({id: datos.id, formData});
+      const res = await add_photo({id: datos?.id, formData});
       console.log(res)
     } catch (error) {
       console.log(error)
@@ -122,32 +122,15 @@ const Perfil = () => {
   const opciones = dataCount?.map((item) => ({
     value: item?.name.common,
     label: item.flag,
-    label2: item.name.common
-    // label2:
   }));
 
-  useEffect(() => {
-    // const pais = useGetLocalStorange('pais')
-    const initialCountry = profile?.country;
-    const selected = opciones?.find(option => option?.label2==initialCountry);
+  if(error){
+    return <div>{error.message}</div>
+  }
 
-    // console.log(pais)
-    if (selected) {
-        setSelectedOption(selected);
-    }else {
-        setSelectedOption(null);
-    }
-  }, [profile?.country, id, opciones?.value]);
-
-    if(error){
-      return <div>{error.message}</div>
-    }
-
-    if(isLoading){
-      return <Loader />
-    }
-
-    // console.log(data)
+  if(isLoading){
+    return <Loader />
+  }
 
   return (
     <Fragment>
@@ -204,11 +187,11 @@ const Perfil = () => {
                      <Select 
                         options={opciones}
                         onChange={handleSelect}
-                        defaultValue={selectedOption ? selectedOption: selectedOption}
-                        formatOptionLabel={({ label, label2 }) => (
+                        defaultValue={profile?.country || data?.data?.country}
+                        formatOptionLabel={({ label, value }) => (
                             <div className="d-flex align-items-center gap-3 px-4">
                               <p className="ml-2 mb-0">{label}</p>
-                              <p className="ml-2 mb-0">{label2}</p>
+                              <p className="ml-2 mb-0">{value}</p>
                             </div>
                         )}
                      />
