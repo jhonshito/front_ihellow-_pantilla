@@ -42,7 +42,6 @@ const Perfil = () => {
   // capturar country
   const handleSelect = (selectedOption) => {
     setEstado(selectedOption);
-    console.log(selectedOption)
   }
 
   const fileInputRef = useRef(null);
@@ -55,12 +54,10 @@ const Perfil = () => {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    console.log(file)
     const datos = useGetLocalStorange('data');
 
     try {
       const res = await add_photo({id: datos?.id, formData});
-      console.log(res)
     } catch (error) {
       console.log(error)
     }
@@ -84,11 +81,11 @@ const Perfil = () => {
 
     try {
       const res = await update_profile({id, name: names, country: estado, phone, city});
-      console.log(res)
       const {data, error} = res;
       if(data.status == 200 && data.update == true){
         toast.success('!EXIT¡', {
-          position: toast.POSITION.BOTTOM_RIGHT
+          position: toast.POSITION.BOTTOM_RIGHT,
+          progressClassName: 'bg-primary'
         })
       }
 

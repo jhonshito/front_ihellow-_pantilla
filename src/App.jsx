@@ -25,7 +25,7 @@ import Tarjeta from "./components/Tarjeta";
 // import Index from "./components/Index";
 import Confirmacion from "./components/auth/Confirmacion";
 import Empresario from "./components/empresario/Empresario";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 // import DataEmpresario from "./components/empresario/DataEmpresario";
 // import CardEmpresario from "./components/empresario/CardEmpresario";
 import Perfil from "./components/auth/Perfil";
@@ -37,6 +37,8 @@ import SendEmail from "./components/auth/SendEmail";
 import EmailSuccess from "./components/auth/EmailSuccess";
 import ForgetPass from "./components/auth/ForgetPass";
 import SuccessPass from "./components/auth/SuccessPass";
+import Politicas from "./components/politicaYprivacidad/Politicas";
+import Condiciones from "./components/condicionesDeUso/Condiciones";
 
 
 function App() {
@@ -89,6 +91,8 @@ function App() {
                   <Route path="/home/company" element={<Company />} />: ''
               }
               
+              <Route path="/home/terms-of-service" element={<Condiciones />} />
+              <Route path="/home/privacy-policy" element={<Politicas />} />
               <Route path="/home/perfil" element={<Perfil />} />
             </Route>
           </Routes>

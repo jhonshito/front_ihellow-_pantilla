@@ -37,7 +37,8 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
 
   const [fechas, setFechas] = useState({
     fechaInicial: '',
-    fechaFinal: ''
+    fechaFinal: '',
+    fechaFitro: 0
   });
 
   useEffect(() => {
@@ -86,7 +87,8 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
     // Actualizar el estado con las nuevas fechas
     setFechas({
       fechaInicial: dateInicial,
-      fechaFinal: dateFinal
+      fechaFinal: dateFinal,
+      fechaFitro: fechas.fechaFitro + 1
     });
 
     setFecha(fechas);
@@ -223,7 +225,9 @@ const Empresario = ({setIdLanding, setIdUser, setFecha}) => {
           </div>
             {
               location.pathname === '/home' ?
-              <InicioEmpresario idLanding={selectedOption?.value} fechas={fechas} />: ''
+              <Suspense fallback="loading">
+                <InicioEmpresario idLanding={selectedOption?.value} fechas={fechas} />
+              </Suspense>: ''
             }
           <Suspense fallback="loading">
               <Outlet></Outlet>

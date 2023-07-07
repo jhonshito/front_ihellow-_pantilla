@@ -83,11 +83,6 @@ const DataFilter = ({setDataFecha, role}) => {
         });
     };
 
-    if(location?.pathname === '/home' || location?.pathname === '/home/data'){
-      console.log(location.pathname)
-    }else {
-      console.log('nooo')
-    }
 
   return (
     <div>
@@ -143,7 +138,9 @@ const DataFilter = ({setDataFecha, role}) => {
       }
       {
         location.pathname === '/home' ?
-        <InicioEmpresario fechas={fechas} />: ''
+        <Suspense fallback="loading">
+          <InicioEmpresario fechas={fechas} />
+        </Suspense>: ''
       }
         <Suspense fallback="loading">
             <Outlet></Outlet>

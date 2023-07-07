@@ -1,4 +1,4 @@
-import { useEffect, memo, Fragment, useState } from "react";
+import React,{ useEffect, memo, Fragment, useState } from "react";
 import { Row, Col, Card, Dropdown, Image, Button, Table } from "react-bootstrap";
 
 // react-toastify para los mensajes de validación
@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // icons
 import { AiFillFacebook, AiOutlineWhatsApp, AiFillInstagram, AiFillYoutube, AiFillLinkedin } from "react-icons/ai";
-import { BsPersonFillAdd } from "react-icons/bs";
+import { BsPersonFillAdd, BsFiletypeExe } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { MdOpenInBrowser } from "react-icons/md";
   
@@ -16,12 +16,18 @@ import Loader from "./loading/Loader";
 
 import { useGetLocalStorange } from "./hooks/sendLocalstorange";
 
+// modulo para descargar los datos
+import { CSVLink } from "react-csv";
+
+import { useDatosExportados } from "./hooks/exportData";
+
 const Data = ({idLanding, fechaFiltro}) => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [lista] = useLista_serviceMutation();
 
     const [data, setData] = useState();
+    const [exportacion, setExportacion] = useState();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,11 +49,24 @@ const Data = ({idLanding, fechaFiltro}) => {
         };
       
         fetchData();
-    }, [fechaFiltro, idLanding])
+    }, [fechaFiltro?.fechaFitro, idLanding])
+
 
     if(isLoading){
       return <Loader />
     }
+
+    const datosExportar =
+    data?.data?.datos?.length > 0 ? useDatosExportados(data?.data?.datos) : 0;
+
+    const headers = [
+      { label: "Events", key: "Events" },
+      { label: "Dates", key: "Dates" },
+      { label: "Hours", key: "Hours" },
+    ];
+
+    console.log(datosExportar);
+    // console.log(data)
 
   return (
     <Fragment>
@@ -55,6 +74,19 @@ const Data = ({idLanding, fechaFiltro}) => {
         <Col lg="12">
           <Card>
             <Card.Body>
+            {data?.data?.datos?.length <= 0 ? (
+                ""
+              ) : (
+                <CSVLink
+                  data={datosExportar}
+                  filename="ihellow_data.csv"
+                >
+                  <button className="btn btn-success d-flex align-items-center gap-2">
+                    <BsFiletypeExe className="fs-4 fw-bold" />
+                    <span>Download</span>
+                  </button>
+                </CSVLink>
+              )}
               <div className="custom-table-effect table-responsive border rounded mt-3">
                 <Table className="mb-0" id="datatable" data-toggle="data-table">
                   <thead>

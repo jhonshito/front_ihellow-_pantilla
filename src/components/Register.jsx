@@ -23,18 +23,22 @@ import auth1 from '../assets/images/auth/01.png'
 import Logo from "../assets/iHellow-Logo.webp";
 
 // redux toolkin
-import { useRegisterMutation, useRegister_googleMutation } from "../api/apiSplice";
+import { useRegisterMutation, useRegister_googleMutation,useListCountryQuery } from "../api/apiSplice";
 
 // firebase
 import { signup, loginWithGoogle } from "./contentFirebase/AuthFirebase";
 
 // hook localstorange
 import { useSendLocalStorange } from "./hooks/sendLocalstorange";
+import Loader from './loading/Loader';
+
+import Select from "react-select";
 
 const Register = () => {
 
    // redux toolkit query
    const [register] = useRegisterMutation();
+   const { data, isLoading, error } = useListCountryQuery();
    const [register_google] = useRegister_googleMutation();
 
    // navegacion
@@ -59,6 +63,8 @@ const Register = () => {
 
    //estados del password
    const [confirmacion, setConfirmacion] = useState('');
+   const [isChecked, setIsChecked] = useState(false);
+   const [estado, setEstado] = useState();
 
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -67,7 +73,8 @@ const Register = () => {
    if (name === 'username' && !/^[a-zA-Z\s]*$/.test(value)) {
       if(!usernameErrorShown){
          toast.warning('El username solo acepta letras.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
          setUsernameErrorShown(true)
       }
@@ -130,55 +137,72 @@ const Register = () => {
   const handleForm = async(e) => {
    e.preventDefault();
 
+   if(isChecked === false){
+      return toast.warning('To register you must accept the terms and conditions.', {
+         position: toast.POSITION.TOP_CENTER,
+         progressClassName: 'bg-primary'
+      })
+   }
+
    switch(true){
       case !formData.username:
          toast.warning('El username no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case !formData.lastname:
          toast.warning('El lastname no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case !formData.email:
          toast.warning('El email no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case !emailRegex.test(formData.email):
          toast.warning('El email no es valido', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case !formData.phone:
          toast.warning('El phone no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
-      case !formData.country:
+      case !estado:
          toast.warning('El country no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case !formData.city:
          toast.warning('El city no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case !formData.password:
          toast.warning('El password no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case !confirmacion:
          toast.warning('El campo de la confirmación no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
       case formData.password !== confirmacion:
          toast.warning('Las contraseñas no coinsiden', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
       break;
 
@@ -192,18 +216,22 @@ const Register = () => {
 
             console.log(response);
 
-            const res = await register({token: response.user.uid || formData.token, email: formData.email, phone: formData.phone, password: formData.password, city: formData.city, country: formData.country, username: concatenacion, });
+            const res = await register({token: response.user.uid || formData.token, email: formData.email, phone: formData.phone, password: formData.password, city: formData.city, country: estado, username: concatenacion, });
+
             if(res.data.status == 400){
                toast.warning(res.data.mensaje, {
-                  position: toast.POSITION.TOP_CENTER
+                  position: toast.POSITION.TOP_CENTER,
+                  progressClassName: 'bg-primary'
                })
             }
+
             if(res.data.status == 200){
                localStorage.setItem('data', JSON.stringify(res.data.data))
                setTimeout(() => {
                   navigate('/confirm')
                }, 2000)
             }
+
          } catch (error) {
             console.log(error)
          }
@@ -214,6 +242,14 @@ const Register = () => {
 
   const authGoogle = async(e) => {
    e.preventDefault();
+
+   if(isChecked === false){
+      return toast.warning('To register you must accept the terms and conditions.', {
+         position: toast.POSITION.TOP_CENTER,
+         progressClassName: 'bg-primary'
+      })
+   }
+
       try {
          const response = await loginWithGoogle();
          console.log(response);
@@ -226,7 +262,8 @@ const Register = () => {
 
          if(res.data.status == 400){
             toast.warning(res.data.mensaje, {
-               position: toast.POSITION.TOP_CENTER
+               position: toast.POSITION.TOP_CENTER,
+               progressClassName: 'bg-primary'
             })
          }
          if(res.data.status == 200){
@@ -239,6 +276,27 @@ const Register = () => {
          console.log(error);
       }
   }
+
+   // capturar country
+   const handleSelect = (selectedOption) => {
+      setEstado(selectedOption);
+      console.log(selectedOption)
+   }
+
+   const opciones = data?.map((item) => ({
+      value: item?.name.common,
+      label: item.flag,
+   }));
+
+   if(error){
+      return <div>{error.message}</div>
+    }
+
+   if(isLoading){
+      return <Loader />
+   }
+
+   // console.log(isChecked)
 
   return (
     <Fragment>
@@ -284,7 +342,17 @@ const Register = () => {
                                     <Col lg="6">
                                        <Form.Group className="form-group">
                                           <Form.Label htmlFor="country" className="">Country</Form.Label>
-                                          <Form.Control type="text" className="" name='country' id="country" placeholder="+57" onChange={handleFormData} />
+                                          {/* <Form.Control type="text" className="" name='country' id="country" placeholder="+57" onChange={handleFormData} /> */}
+                                          <Select 
+                                             options={opciones}
+                                             onChange={handleSelect}
+                                             formatOptionLabel={({ label, value }) => (
+                                             <div className="d-flex align-items-center gap-3 px-4">
+                                                <p className="ml-2 mb-0">{label}</p>
+                                                <p className="ml-2 mb-0">{value}</p>
+                                             </div>
+                                             )}
+                                          />
                                        </Form.Group>
                                     </Col>
                                     <Col lg="6">
@@ -307,7 +375,7 @@ const Register = () => {
                                     </Col>
                                     <Col lg="12" className="d-flex justify-content-center">
                                        <Form.Check className="mb-3 form-check">
-                                          <Form.Check.Input type="checkbox" id="customCheck1" />
+                                          <Form.Check.Input onChange={() => setIsChecked(true)} type="checkbox" id="customCheck1" />
                                           <Form.Check.Label htmlFor="customCheck1">I agree with the terms of use</Form.Check.Label>
                                        </Form.Check>
                                     </Col>

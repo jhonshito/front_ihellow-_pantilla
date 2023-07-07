@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 
 //apexcharts
 import Chart from "react-apexcharts";
@@ -30,7 +30,6 @@ const ChatGrafica = ({fechas, idLanding}) => {
           fechaInicial: fechas?.fechaInicial,
           fechaFinal: fechas?.fechaFinal
         });
-        console.log(res)
         setDataGrafica(res);
       } catch (error) {
         console.log(error);
@@ -41,7 +40,7 @@ const ChatGrafica = ({fechas, idLanding}) => {
 
     useEffect(() => {
         fetchData();
-    }, [fechas, idLanding]);
+    }, [fechas?.fechaFitro, idLanding]);
 
 
     useSelector(SettingSelector.theme_color);
@@ -194,14 +193,16 @@ const ChatGrafica = ({fechas, idLanding}) => {
     // console.log(dataGrafica)
 
   return (
-    <Chart
-      options={chart2?.options}
-      series={chart2?.series}
-      type="line"
-      height="100%"
-      className="sales-chart-02"
-    >
-    </Chart>
+    <Suspense fallback="loading">
+      <Chart
+        options={chart2?.options}
+        series={chart2?.series}
+        type="line"
+        height="100%"
+        className="sales-chart-02"
+      >
+      </Chart>
+    </Suspense>
   )
 }
 

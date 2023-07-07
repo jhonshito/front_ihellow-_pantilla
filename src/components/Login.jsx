@@ -59,21 +59,24 @@ const Login = ({setEstado, estado}) => {
 
       if(!formData.username){
          toast.warning('El Email no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
          return
       }
 
       if(!emailRegex.test(formData.username)){
          toast.warning('El email no es valido', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
          return
       }
 
       if(!formData.password){
          toast.warning('El password no puede estar vacio.', {
-            position: toast.POSITION.TOP_CENTER
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
          })
          return
       }

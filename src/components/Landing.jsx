@@ -115,7 +115,6 @@ const Landing = ({role}) => {
     const handelNext = () => {
         if(datos.alias && datos.url && datos.seo){
             AccountShow('Account')
-            console.log(datos)
         }
     }
 
@@ -129,12 +128,10 @@ const Landing = ({role}) => {
         const file = event.target.files[0]; // Solo captura el primer archivo seleccionado
         const formData = new FormData();
         formData.append('file', file, inputName);
-        console.log(formData)
 
         try {
             
             const res = await add_img_landing({id: data?.result?.id, formData});
-            console.log(res)
             useSendLocalStorange(res?.data?.original_filename, res?.data?.url)
 
         } catch (error) {
@@ -198,13 +195,10 @@ const Landing = ({role}) => {
                 AccountShow('Image');
             }
 
-            console.log(res)
         } catch (error) {
             console.log(error)
         }
     }
-
-
 
     if (isLoading) {
         return <Loader />; // Muestra un componente de carga mientras se obtienen los datos
@@ -214,7 +208,6 @@ const Landing = ({role}) => {
         return <div>Error: {error.message}</div>; // Manejo de error
     }
 
-    console.log(data)
 
   return (
     <Row>
@@ -393,7 +386,7 @@ const Landing = ({role}) => {
                                             <div className="form-group">
                                                 <label className="form-label">Tu Ciudad de Entrega: *</label>
                                                 <select value={datos?.ciudad} name="ciudad" className="form-control" onChange={handleChange}>
-                                                    <option value="" disabled selected hidden>Selecciona una opción.</option>
+                                                    <option value="" disabled hidden>Selecciona una opción.</option>
                                                     <option value="bogota">Bogota</option>
                                                     <option value="cali">Cali</option>
                                                     <option value="medellin">Medellin</option>
@@ -416,7 +409,7 @@ const Landing = ({role}) => {
                                             <div className="form-group">
                                                 <label className="form-label">Tu tarjeta tendrá de manera obligatoria el QR. Dinos qué deseas que aparezca en tu Tarjeta Impresa: *</label> 
                                                 <select name="recomendacion_card" value={datos?.recomendacion_card} onChange={handleChange} className="form-control">
-                                                    <option value="" disabled selected hidden>Selecciona una opción.</option>
+                                                    <option value="" disabled hidden>Selecciona una opción.</option>
                                                     <option value="logo">Tu Logo (Recomendable)</option>
                                                     <option value="marca">Tu Nombre o Marca Personal (Recomendable si tu logo no cuenta con tu nombre)</option>
                                                     <option value="foto">Tu Foto (No es recomendable )</option>

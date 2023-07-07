@@ -1,4 +1,4 @@
-import { useEffect, memo, Fragment, useState } from "react";
+import { useEffect, memo, Fragment, useState, Suspense } from "react";
 import { Row, Col, Dropdown, Button, Card } from "react-bootstrap";
 
 // react-toastify para los mensajes de validación
@@ -24,58 +24,63 @@ import Loader from "../loading/Loader";
 
 import { useGetLocalStorange } from "../hooks/sendLocalstorange";
 import ChatGrafica from "../grafica/ChatGrafica";
+import ClicksAndOpening from "../buttons/ClicksAndOpening";
+import Estadis from "../estadisticas/Estadis";
 
 const InicioEmpresario = ({idLanding, fechas}) => {
 
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
 
-  const [metricas] = useMetricasMutation();
-  const [estadisticas] = useEstadisticasMutation();
+  // const [metricas] = useMetricasMutation();
+  // const [estadisticas] = useEstadisticasMutation();
   // const [grafica] = useGraficaMutation();
 
-  const [datos, setDatos] = useState();
-  const [anality, setAnality] = useState();
+  // const [datos, setDatos] = useState();
+  // const [anality, setAnality] = useState();
   // const [dataGrafica, setDataGrafica] = useState();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true); // Mostrar el loading
-        const res = await metricas({
-          id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
-          fechaInicial: fechas?.fechaInicial || '',
-          fechaFinal: fechas?.fechaFinal || ''
-        });
-        setDatos(res);
-      } catch (error) {
-        console.log(error);
-      }finally{
-        setIsLoading(false); // Ocultar el loading
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setIsLoading(true); // Mostrar el loading
+  //       const res = await metricas({
+  //         id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
+  //         fechaInicial: fechas?.fechaInicial || '',
+  //         fechaFinal: fechas?.fechaFinal || ''
+  //       });
+  //       setDatos(res);
+  //       console.log(res)
+  //       console.log('si')
+  //     } catch (error) {
+  //       console.log(error);
+  //     }finally{
+  //       setIsLoading(false); // Ocultar el loading
+  //     }
+  //   };
     
-    fetchData();
-  }, [fechas, idLanding]);
+  //   fetchData();
+  // }, [fechas?.fechaFitro, idLanding]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true); // Mostrar el loading
-        const res = await estadisticas({
-          id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
-          fechaInicial: fechas?.fechaInicial || '',
-          fechaFinal: fechas?.fechaFinal || ''
-        });
-        setAnality(res)
-      } catch (error) {
-        console.log(error);
-      }finally{
-        setIsLoading(false); // Ocultar el loading
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setIsLoading(true); // Mostrar el loading
+  //       const res = await estadisticas({
+  //         id_landing: useGetLocalStorange('idLanding') || useGetLocalStorange('data')?.id_landing || idLanding,
+  //         fechaInicial: fechas?.fechaInicial || '',
+  //         fechaFinal: fechas?.fechaFinal || ''
+  //       });
+  //       setAnality(res)
+  //       console.log('si')
+  //     } catch (error) {
+  //       console.log(error);
+  //     }finally{
+  //       setIsLoading(false); // Ocultar el loading
+  //     }
+  //   };
     
-    fetchData();
-  }, [fechas, idLanding]);
+  //   fetchData();
+  // }, [fechas?.fechaFitro, idLanding]);
 
   let navigate = useNavigate();
 
@@ -84,13 +89,13 @@ const InicioEmpresario = ({idLanding, fechas}) => {
     if(!data) return navigate('/')
   }, [])
 
-  if(isLoading){
-    return <Loader />
-  }
+  // if(isLoading){
+  //   return <Loader />
+  // }
 
   return (
     <Fragment>
-      <Row>
+      {/* <Row>
         <Col lg="3">
           <Card className="text-center">
             <Card.Body>
@@ -113,8 +118,10 @@ const InicioEmpresario = ({idLanding, fechas}) => {
             </Card.Body>
           </Card>
         </Col>
-      </Row>
-
+      </Row> */}
+      <Suspense fallback="loading">
+        <ClicksAndOpening fechas={fechas} idLanding={idLanding} />
+      </Suspense>
       <Row>
         <Col lg="8" xl="8">
           <Card className="card-block card-stretch card-height">
@@ -167,13 +174,15 @@ const InicioEmpresario = ({idLanding, fechas}) => {
               </div>
             </Card.Header>
             <Card.Body>
-              <ChatGrafica fechas={fechas} idLanding={idLanding} />
+              <Suspense fallback={<div>Cargando...</div>}>
+                <ChatGrafica fechas={fechas} idLanding={idLanding} />
+              </Suspense>
             </Card.Body>
           </Card>
         </Col>
 
         {/* este es el last transition */}
-        <Col lg="4" xl="4">
+        {/* <Col lg="4" xl="4">
           <Card className="card card-block card-stretch card-height">
             <Card.Body>
               <div className="mb-5">
@@ -253,7 +262,8 @@ const InicioEmpresario = ({idLanding, fechas}) => {
               </div>
             </Card.Body>
           </Card>
-        </Col>
+        </Col> */}
+        <Estadis fechas={fechas} idLanding={idLanding} />
       </Row>
 
       <ToastContainer />

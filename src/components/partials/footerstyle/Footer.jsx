@@ -9,8 +9,8 @@ const Footer = () => {
            <footer className="footer">
                 <div className="footer-body">
                     <ul className="left-panel list-inline mb-0 p-0">
-                        <li className="list-inline-item"><Link to="/dashboard/extra/privacy-policy">Privacy Policy</Link></li>
-                        <li className="list-inline-item"><Link to="/dashboard/extra/terms-of-service">Terms of Use</Link></li>
+                        <li className="list-inline-item"><Link to="/home/privacy-policy">Privacy Policy</Link></li>
+                        <li className="list-inline-item"><Link to="/home/terms-of-service">Terms of Use</Link></li>
                     </ul>
                     <div className="right-panel">
                         ©<script>document.write(new Date().getFullYear())</script>  Developed in Colombia

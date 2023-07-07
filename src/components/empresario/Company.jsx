@@ -15,13 +15,18 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // img
 import imgsuccess from '../../assets/images/pages/img-success.png'
-import { useLista_company_by_idQuery, useUpdate_company_cardMutation, useAdd_logo_companyMutation } from "../../api/apiSplice";
+import { useLista_company_by_idQuery, useUpdate_company_cardMutation, useAdd_logo_companyMutation, useListCountryQuery } from "../../api/apiSplice";
 import { useGetLocalStorange, useSendLocalStorange } from "../hooks/sendLocalstorange";
 import Loader from '../loading/Loader'
+
+import Select from "react-select";
 
 const Company = () => {
     const id = useGetLocalStorange('data')?.id;
     const { data, isLoading, error } = useLista_company_by_idQuery({ id });
+
+    const { data: dataCount, isLoading: isload, error: isError } = useListCountryQuery();
+
     const [ update_company_card ] = useUpdate_company_cardMutation();
     const [ add_logo_company ] = useAdd_logo_companyMutation();
     const [datos, setDatos] = useState({
@@ -45,10 +50,10 @@ const Company = () => {
         barrio: data?.result?.parameters?.barrio || '',
         direccion: data?.result?.parameters?.direccion || '',
         recomendacion_card: data?.result?.parameters?.recomendacion_card || '',
-        logo_company: useGetLocalStorange('logo_company') || 'logo_company'
+        logo_company: useGetLocalStorange('logo_company') || data?.result?.logo
     });
     const [logo, setLogo] = useState(false);
-
+    const [estado, setEstado] = useState();
     const [show, AccountShow] = useState('A');
 
     useEffect(() => {
@@ -84,6 +89,11 @@ const Company = () => {
           [name]: value
         }));
     };
+
+    // capturar country
+    const handleSelect = (selectedOption) => {
+        setEstado(selectedOption);
+    }
 
     const handleFile = async(event) => {
         const inputName = event.target.name;
@@ -134,12 +144,12 @@ const Company = () => {
             { name: 'recomendacion_card', url: datos?.recomendacion_card }
         ]
 
-        const logo = useGetLocalStorange('logo_company');
+        const logo = useGetLocalStorange('logo_company') || data?.result?.logo;
         const id = data?.result?.id;
         console.log(id)
 
         try {
-            const res = await update_company_card({id_company: id, name, identify, phones, addresses, country, city, parameter: formArray, logo_company: logo || logo_company});
+            const res = await update_company_card({id_company: id, name, identify, phones, addresses, country: estado || country, city, parameter: formArray, logo_company: logo || logo_company});
 
             console.log(res)
             const { data, error } = res;
@@ -171,7 +181,12 @@ const Company = () => {
         setLogo(true)
     }
 
-    if (isLoading) {
+    const opciones = dataCount?.map((item) => ({
+        value: item?.name.common,
+        label: item.flag,
+    }));
+
+    if (isLoading || isload) {
         return <Loader />; // Muestra un componente de carga mientras se obtienen los datos
     }
 
@@ -179,8 +194,12 @@ const Company = () => {
         return <div>Error: {error.message}</div>; // Manejo de error
     }
 
-    console.log(data)
+    if (isError) {
+        return <div>Error: {isError.message}</div>; // Manejo de error
+    }
 
+    // console.log(da)
+    // console.log(data)
   return (
     <Row>
             <Col sm="12" lg="12">
@@ -294,7 +313,18 @@ const Company = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Country: *</label>
-                                                <input type="text" className="form-control" name="country" value={datos?.country} onChange={handleChange}  placeholder="Country" />
+                                                {/* <input type="text" className="form-control" name="country" value={datos?.country} onChange={handleChange}  placeholder="Country" /> */}
+                                                <Select 
+                                                    options={opciones}
+                                                    onChange={handleSelect}
+                                                    defaultValue={datos?.country || data?.result?.country}
+                                                    formatOptionLabel={({ label, value }) => (
+                                                        <div className="d-flex align-items-center gap-3 px-4">
+                                                          <p className="ml-2 mb-0">{label}</p>
+                                                          <p className="ml-2 mb-0">{value}</p>
+                                                        </div>
+                                                    )}
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
