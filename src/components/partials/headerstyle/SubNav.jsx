@@ -75,8 +75,9 @@ const SubNav = () => {
   let navigate = useNavigate();
 
   const handleValidacion = () => {
-    localStorage.removeItem('data');
-    localStorage.removeItem('idLanding');
+    // localStorage.removeItem('data');
+    // localStorage.removeItem('idLanding');
+    localStorage.clear();
     const local = useGetLocalStorange('data');
     if(!local) return navigate('/')
     return navigate('/home')

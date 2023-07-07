@@ -10,10 +10,10 @@ export const apiSplice = createApi({
     endpoints: (buider) => ({
         // esto hace el login
         login: buider.mutation({
-            query: ({ namesuser, password }) => ({
+            query: ({ namesuser, password, token, name, photo, ismetodo }) => ({
                 url: 'login',
                 method: "POST",
-                body: { namesuser: namesuser, password: password }
+                body: { namesuser: namesuser, password: password, token: token, name: name, photo: photo, ismetodo }
             }),
             providesTags: ['log']
         }),
@@ -188,6 +188,14 @@ export const apiSplice = createApi({
                 method: "PUT",
                 body: { id, password }
             })
+        }),
+
+        register_google: buider.mutation({
+            query: ({token, email, name, photo}) => ({
+                url: "register_google",
+                method: "POST",
+                body: {token, email, name, photo}
+            })
         })
     })
 });
@@ -214,5 +222,6 @@ export const {
     useListCountryQuery,
     useSend_emailMutation,
     useUpdatePassMutation,
-    useAdd_img_landingMutation
+    useAdd_img_landingMutation,
+    useRegister_googleMutation
 } = apiSplice

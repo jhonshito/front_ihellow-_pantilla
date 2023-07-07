@@ -23,15 +23,19 @@ import auth1 from '../assets/images/auth/01.png'
 import Logo from "../assets/iHellow-Logo.webp";
 
 // redux toolkin
-import { useRegisterMutation } from "../api/apiSplice";
+import { useRegisterMutation, useRegister_googleMutation } from "../api/apiSplice";
 
 // firebase
-import { signup } from "./contentFirebase/AuthFirebase";
+import { signup, loginWithGoogle } from "./contentFirebase/AuthFirebase";
+
+// hook localstorange
+import { useSendLocalStorange } from "./hooks/sendLocalstorange";
 
 const Register = () => {
 
    // redux toolkit query
    const [register] = useRegisterMutation();
+   const [register_google] = useRegister_googleMutation();
 
    // navegacion
    const navigate = useNavigate();
@@ -186,9 +190,9 @@ const Register = () => {
             console.log(formData)
             const response = await signup(formData.email, formData.password);
 
-            // console.log(response);
+            console.log(response);
 
-            const res = await register({token: response.user.accessToken || formData.token, email: formData.email, phone: formData.phone, password: formData.password, city: formData.city, country: formData.country, username: concatenacion, });
+            const res = await register({token: response.user.uid || formData.token, email: formData.email, phone: formData.phone, password: formData.password, city: formData.city, country: formData.country, username: concatenacion, });
             if(res.data.status == 400){
                toast.warning(res.data.mensaje, {
                   position: toast.POSITION.TOP_CENTER
@@ -206,6 +210,34 @@ const Register = () => {
       break;
    }
 
+  }
+
+  const authGoogle = async(e) => {
+   e.preventDefault();
+      try {
+         const response = await loginWithGoogle();
+         console.log(response);
+         const res = await register_google({email: response.user.email, token: response.user.uid, name: response.user.displayName, photo: response.user.photoURL, ismetodo: 'google'});
+
+         const { data, error } = res
+
+         console.log(error)
+         console.log(data)
+
+         if(res.data.status == 400){
+            toast.warning(res.data.mensaje, {
+               position: toast.POSITION.TOP_CENTER
+            })
+         }
+         if(res.data.status == 200){
+            localStorage.setItem('data', JSON.stringify(res.data.data))
+            setTimeout(() => {
+               navigate('/confirm')
+            }, 2000)
+         }
+      } catch (error) {
+         console.log(error);
+      }
   }
 
   return (
@@ -286,7 +318,7 @@ const Register = () => {
                                  <p className="text-center my-3">or sign in with other accounts?</p>
                                  <div className="d-flex justify-content-center">
                                     <ListGroup as="ul" className="list-group-horizontal list-group-flush">
-                                       <ListGroup.Item as="li" className="list-group-item border-0 pb-0">
+                                       <ListGroup.Item onClick={authGoogle} as="li" className="list-group-item border-0 pb-0">
                                           <Link to="#"><Image src={google} alt="gm" /></Link>
                                        </ListGroup.Item>
                                        <ListGroup.Item as="li" className="list-group-item border-0 pb-0">

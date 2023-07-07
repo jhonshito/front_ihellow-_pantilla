@@ -28,7 +28,7 @@ import { useLoginMutation } from "../api/apiSplice";
 import { useSendLocalStorange } from "./hooks/sendLocalstorange";
 
 // firebase
-import { signin, loginWithGoogle } from "./contentFirebase/AuthFirebase";
+import { signin, loginWithGoogle, loginWidthFacebook } from "./contentFirebase/AuthFirebase";
 
 const Login = ({setEstado, estado}) => {
 
@@ -80,13 +80,15 @@ const Login = ({setEstado, estado}) => {
 
       try {
 
-         // const response = await signin(formData.username, formData.password);
-         // console.log(response)
+         const res = await login({namesuser: formData.username, password: formData.password, ismetodo: 'login'});
 
-         const res = await login({namesuser: formData.username, password: formData.password});
          const { data, error } = res
+
+         console.log(res)
+
          if (res.data.status === 200) {
             const data = res.data.data
+
             //  funcion que guarda en el localstorange
             useSendLocalStorange('data', data);
             toast.success('¡Éxito!', {
@@ -94,10 +96,12 @@ const Login = ({setEstado, estado}) => {
                progressClassName: 'bg-primary',
                // bodyClassName: 'bg-primary'
             })
+
             setTimeout(() => {
                setEstado(estado + 1)
                navigate('/home');
             }, 2000)
+            
          } else if (res.data.status === 400) {
            navigate('/');
          } else {
@@ -105,7 +109,7 @@ const Login = ({setEstado, estado}) => {
          }
           
       } catch (error) {
-         console.log(error);
+         console.log(error.message);
       }
 
    }
@@ -115,8 +119,51 @@ const Login = ({setEstado, estado}) => {
       try {
          const response = await loginWithGoogle();
          console.log(response);
+
+         const res = await login({namesuser: response.user.email, token: response.user.uid, name: response.displayName, photo: response.photoURL, ismetodo: 'google'});
+
+         const { data, error } = res
+
+         console.log(error)
+
+         if (res.data.status === 200) {
+            const data = res.data.data
+
+            //  funcion que guarda en el localstorange
+            useSendLocalStorange('data', data);
+            toast.success('¡Éxito!', {
+               position: toast.POSITION.TOP_CENTER,
+               progressClassName: 'bg-primary',
+            })
+
+            setTimeout(() => {
+               setEstado(estado + 1)
+               navigate('/home');
+            }, 2000)
+
+         } else if (error.data.status === 400) {
+
+           navigate('/');
+
+         } else {
+
+           navigate('/');
+
+         }
       } catch (error) {
          console.log(error);
+      }
+   }
+
+   
+
+   const loginFacebook = async (e) => {
+      e.preventDefault();
+      try {
+        const res = await loginWidthFacebook();
+        console.log(res);
+      } catch (error) {
+        console.log(error.message);
       }
    }
 
@@ -166,7 +213,7 @@ const Login = ({setEstado, estado}) => {
                                  <ListGroup.Item onClick={loginGoogle} as="li" className="border-0 pb-0">
                                     <a href="#"><Image src={google} alt="gm" /></a>
                                  </ListGroup.Item>
-                                 <ListGroup.Item as="li" className="border-0 pb-0">
+                                 <ListGroup.Item onClick={loginFacebook} as="li" className="border-0 pb-0">
                                     <a href="#"><Image src={facebook} alt="fb" /></a>
                                  </ListGroup.Item>
                                  <ListGroup.Item as="li" className="border-0 pb-0">

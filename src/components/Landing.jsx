@@ -31,8 +31,8 @@ const Landing = ({role}) => {
         alias: data?.result?.alias || '',
         url: data?.result?.url || '',
         seo: data?.result?.url || '',
-        foto: useGetLocalStorange('foto_landing') || 'foto_landing',
-        fondo: useGetLocalStorange('fondo_landing') || 'fondo_landing',
+        foto: data?.result?.foto || useGetLocalStorange('foto_landing'),
+        fondo: data?.result?.fondo|| useGetLocalStorange('fondo_landing'),
         linkedin: data?.result?.parameters?.links?.linkedin,
         instagram: data?.result?.parameters?.links?.instagram,
         facebook: data?.result?.parameters?.links?.facebook,
@@ -91,6 +91,8 @@ const Landing = ({role}) => {
             alias: data?.result?.alias || '',
             url: data?.result?.url || '',
             seo: data?.result?.url || '',
+            foto: data?.result?.foto || useGetLocalStorange('foto_landing'),
+            fondo: data?.result?.fondo || useGetLocalStorange('fondo_landing'),
             linkedin: data?.result?.parameters?.links?.linkedin || '',
             instagram: data?.result?.parameters?.links?.instagram || '',
             facebook: data?.result?.parameters?.links?.facebook || '',
@@ -107,8 +109,8 @@ const Landing = ({role}) => {
           }));
     }, [data])
 
-    const [foto, setFoto] = useState(false);
-    const [fondo, setFondo] = useState(false);
+    const [fotos, setFoto] = useState(false);
+    const [fondos, setFondo] = useState(false);
    
     const handelNext = () => {
         if(datos.alias && datos.url && datos.seo){
@@ -176,7 +178,7 @@ const Landing = ({role}) => {
         const fondo_landing = useGetLocalStorange('fondo_landing');
 
         try {
-            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, foto: foto || foto_landing, fondo: fondo || fondo_landing, parameter: formArray});
+            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, foto: foto_landing || foto, fondo: fondo_landing || fondo_landing, parameter: formArray});
 
             const { data, error } = res;
             
@@ -453,7 +455,7 @@ const Landing = ({role}) => {
                                                     <div className='w-100'>
                                                         <input type="file" onChange={handleFile}  className="form-control" name="foto_landing" accept="image/*" />
                                                     </div>
-                                                </div>: foto === true ? 
+                                                </div>: fotos === true ? 
                                                 <div className='d-flex gap-5 align-items-center'>
                                                 <div className='w-100'>
                                                     <input type="file" onChange={handleFile}  className="form-control" name="foto_landing" accept="image/*" />
@@ -473,7 +475,7 @@ const Landing = ({role}) => {
                                                 data?.result?.fondo ?
                                                 <div className="form-label">
                                                     <img className="theme-color-img img-fluid avatar avatar-50" src={data?.result?.fondo} alt="Company logo." />
-                                                </div>: ''
+                                                </div>: data?.result?.fondo == 'fondo_landing' ? '': ''
                                             }
                                             {
                                                 data?.result?.fondo == null ?
@@ -481,7 +483,7 @@ const Landing = ({role}) => {
                                                     <div className='w-100'>
                                                         <input type="file" onChange={handleFile}  className="form-control" name="fondo_landing" accept="image/*" />
                                                     </div>
-                                                </div>: fondo === true ?
+                                                </div>: fondos === true ?
                                                 <div className='d-flex gap-5 align-items-center'>
                                                 <div className='w-100'>
                                                     <input type="file" onChange={handleFile}  className="form-control" name="fondo_landing" accept="image/*" />

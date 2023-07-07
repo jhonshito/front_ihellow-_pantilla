@@ -93,10 +93,10 @@ const Tarjeta = ({role, idUser}) => {
 
     const handleSubmit = async(e) => {
 
-        const side_a = useGetLocalStorange('side_a');
-        const side_b = useGetLocalStorange('side_b');
-        const logo_card = useGetLocalStorange('logo_card');
-        const qr = useGetLocalStorange('qr');
+        const side_a = useGetLocalStorange('side_a') || data?.result?.side_a;
+        const side_b = useGetLocalStorange('side_b') || data?.result?.side_b;
+        const logo_card = useGetLocalStorange('logo_card') || data?.result?.logo;
+        const qr = useGetLocalStorange('qr') || data?.result?.qr;
         const id = data?.result?.id
 
         if(side_a !== null && side_b !== null && logo_card !== null && qr !== null){
