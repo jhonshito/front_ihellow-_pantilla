@@ -59,14 +59,6 @@ const Data = ({idLanding, fechaFiltro}) => {
     const datosExportar =
     data?.data?.datos?.length > 0 ? useDatosExportados(data?.data?.datos) : 0;
 
-    const headers = [
-      { label: "Events", key: "Events" },
-      { label: "Dates", key: "Dates" },
-      { label: "Hours", key: "Hours" },
-    ];
-
-    console.log(datosExportar);
-    // console.log(data)
 
   return (
     <Fragment>

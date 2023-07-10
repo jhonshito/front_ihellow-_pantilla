@@ -104,7 +104,7 @@ const Company = () => {
         try {
             
             const res = await add_logo_company({id: data?.result?.id, formData});
-            console.log(res)
+
             useSendLocalStorange(res?.data?.original_filename, res?.data?.url)
 
         } catch (error) {
@@ -146,7 +146,6 @@ const Company = () => {
 
         const logo = useGetLocalStorange('logo_company') || data?.result?.logo;
         const id = data?.result?.id;
-        console.log(id)
 
         try {
             const res = await update_company_card({id_company: id, name, identify, phones, addresses, country: estado || country, city, parameter: formArray, logo_company: logo || logo_company});
@@ -168,7 +167,7 @@ const Company = () => {
             // AccountShow('Image')
 
             data?.status == 200 ? AccountShow('Image') :
-            console.log(res)
+            ''
 
         } catch (error) {
             console.log(error)
@@ -198,8 +197,6 @@ const Company = () => {
         return <div>Error: {isError.message}</div>; // Manejo de error
     }
 
-    // console.log(da)
-    // console.log(data)
   return (
     <Row>
             <Col sm="12" lg="12">

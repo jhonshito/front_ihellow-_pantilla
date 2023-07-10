@@ -32,7 +32,8 @@ const DataFilter = ({setDataFecha, role}) => {
 
     const [fechas, setFechas] = useState({
         fechaInicial: '',
-        fechaFinal: ''
+        fechaFinal: '',
+        fechaFitro: 0
     });
 
     useEffect(() => {
@@ -79,7 +80,8 @@ const DataFilter = ({setDataFecha, role}) => {
         // Actualizar el estado con las nuevas fechas
         setFechas({
           fechaInicial: dateInicial,
-          fechaFinal: dateFinal
+          fechaFinal: dateFinal,
+          fechaFitro: fechas.fechaFitro + 1
         });
     };
 

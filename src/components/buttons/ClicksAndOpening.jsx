@@ -24,8 +24,6 @@ const ClicksAndOpening = ({idLanding, fechas}) => {
               fechaFinal: fechas?.fechaFinal || ''
             });
             setDatos(res);
-            // console.log(res)
-            console.log('si')
           } catch (error) {
             console.log(error);
           }finally{
@@ -37,7 +35,7 @@ const ClicksAndOpening = ({idLanding, fechas}) => {
       }, [fechas?.fechaFitro, idLanding]);
 
       if(isLoading){
-        return <Loader />
+        return <div>Loading.....</div>
       }
 
   return (

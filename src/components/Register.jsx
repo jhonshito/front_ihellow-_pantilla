@@ -26,7 +26,7 @@ import Logo from "../assets/iHellow-Logo.webp";
 import { useRegisterMutation, useRegister_googleMutation,useListCountryQuery } from "../api/apiSplice";
 
 // firebase
-import { signup, loginWithGoogle } from "./contentFirebase/AuthFirebase";
+import { signup, loginWithGoogle, loginWidthFacebook } from "./contentFirebase/AuthFirebase";
 
 // hook localstorange
 import { useSendLocalStorange } from "./hooks/sendLocalstorange";
@@ -277,6 +277,40 @@ const Register = () => {
       }
   }
 
+  const authFacebook = async(e) => {
+   if(isChecked === false){
+      return toast.warning('To register you must accept the terms and conditions.', {
+         position: toast.POSITION.TOP_CENTER,
+         progressClassName: 'bg-primary'
+      })
+   }
+   try {
+      const response = await loginWidthFacebook();
+         console.log(response);
+         const res = await register_google({email: response.user.email, token: response.user.uid, name: response.user.displayName, photo: response.user.photoURL, ismetodo: 'google'});
+
+         const { data, error } = res
+
+         console.log(error)
+         console.log(data)
+
+         if(res.data.status == 400){
+            toast.warning(res.data.mensaje, {
+               position: toast.POSITION.TOP_CENTER,
+               progressClassName: 'bg-primary'
+            })
+         }
+         if(res.data.status == 200){
+            localStorage.setItem('data', JSON.stringify(res.data.data))
+            setTimeout(() => {
+               navigate('/confirm')
+            }, 2000)
+         }
+   } catch (error) {
+      console.log(error.message)
+   }
+  }
+
    // capturar country
    const handleSelect = (selectedOption) => {
       setEstado(selectedOption);
@@ -389,15 +423,15 @@ const Register = () => {
                                        <ListGroup.Item onClick={authGoogle} as="li" className="list-group-item border-0 pb-0">
                                           <Link to="#"><Image src={google} alt="gm" /></Link>
                                        </ListGroup.Item>
-                                       <ListGroup.Item as="li" className="list-group-item border-0 pb-0">
+                                       <ListGroup.Item onClick={authFacebook} as="li" className="list-group-item border-0 pb-0">
                                           <Link to="#"><Image src={facebook} alt="fb" /></Link>
                                        </ListGroup.Item>
-                                       <ListGroup.Item as="li" className="list-group-item border-0 pb-0">
+                                       {/* <ListGroup.Item as="li" className="list-group-item border-0 pb-0">
                                           <Link to="#"><Image src={instagram} alt="im" /></Link>
-                                       </ListGroup.Item>
-                                       <ListGroup.Item as="li" className="list-group-item border-0 pb-0">
+                                       </ListGroup.Item> */}
+                                       {/* <ListGroup.Item as="li" className="list-group-item border-0 pb-0">
                                           <Link to="#"><Image src={linkedin} alt="li" /></Link>
-                                       </ListGroup.Item>
+                                       </ListGroup.Item> */}
                                     </ListGroup>
                                  </div>
                                  <p className="mt-3 text-center">

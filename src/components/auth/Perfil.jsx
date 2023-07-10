@@ -141,7 +141,7 @@ const Perfil = () => {
                     <div className="profile-img position-relative me-3 mb-3 mb-lg-0 profile-logo profile-logo1">
                       <Image
                         className="theme-color-default-img  img-fluid rounded-pill avatar-100"
-                        src={data?.data?.logo == 'userdemo.png' ? avatar1 : data?.data?.logo}
+                        src={data?.data?.logo === 'userdemo.png' ? avatar1 : data?.data?.logo === null ? avatar1: data?.data?.logo}
                         alt="profile-pic"
                       />
                     </div>

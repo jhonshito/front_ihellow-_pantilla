@@ -75,9 +75,10 @@ const SubNav = () => {
   let navigate = useNavigate();
 
   const handleValidacion = () => {
-    // localStorage.removeItem('data');
-    // localStorage.removeItem('idLanding');
-    localStorage.clear();
+    localStorage.removeItem('data');
+    localStorage.removeItem('idLanding');
+    localStorage.removeItem('dataUserSelect');
+    // localStorage.clear();
     const local = useGetLocalStorange('data');
     if(!local) return navigate('/')
     return navigate('/home')
@@ -110,7 +111,6 @@ const SubNav = () => {
   if(error){
     return <div>{error.message}</div>
   }
-
 
   return (
     <Fragment>
@@ -380,7 +380,7 @@ const SubNav = () => {
                 variant="py-0  d-flex align-items-center nav-link"
               >
                 <img
-                  src={data?.data?.logo == 'userdemo.png' ? avatar1 : data?.data?.logo}
+                  src={data?.data?.logo === 'userdemo.png' ? avatar1 : data?.data?.logo === null ? avatar1 : data?.data?.logo}
                   alt="User-Profile"
                   className="theme-color-img img-fluid avatar avatar-50 avatar-rounded"
                   loading="lazy"

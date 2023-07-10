@@ -1,4 +1,4 @@
-import React, { useState, Fragment, memo, useRef } from 'react'
+import React, { useState, Fragment, memo, useRef, useEffect } from 'react'
 // import { useLoginMutation } from "./api/apiSplice";
 
 // react-toastify para los mensajes de validación
@@ -36,9 +36,14 @@ const Login = ({setEstado, estado}) => {
 
    const [login] = useLoginMutation();
 
+   const [rememberMe, setRememberMe] = useState(false);
+   const [rememberLocal, setRememberLocal] = useState()
+   const datasLocal = JSON.parse(localStorage.getItem('rememberMeData'))
+   const rememberMeLocal = localStorage.getItem('rememberMe');
+
    const [ formData, setFormData ] = useState({
-      username: '',
-      password: ''
+      username: datasLocal && rememberMeLocal ? datasLocal?.email: '',
+      password: datasLocal && rememberMeLocal ? datasLocal?.pass: ''
    });
 
    //  estados de validación
@@ -121,9 +126,16 @@ const Login = ({setEstado, estado}) => {
       e.preventDefault();
       try {
          const response = await loginWithGoogle();
+
+         if(!response){
+            return toast.warning('Fallo el login con google', {
+               position: toast.POSITION.TOP_CENTER,
+               progressClassName: 'bg-primary',
+            })
+         }
          console.log(response);
 
-         const res = await login({namesuser: response.user.email, token: response.user.uid, name: response.displayName, photo: response.photoURL, ismetodo: 'google'});
+         const res = await login({namesuser: response.user.email, token: response.user.uid, name: response.user.displayName, photo: response.user.photoURL, ismetodo: 'google'});
 
          const { data, error } = res
 
@@ -158,17 +170,93 @@ const Login = ({setEstado, estado}) => {
       }
    }
 
-   
+   // const loginWidthInstagram = (e) => {
+   //    e.preventDefault();
+
+   //    // try {
+   //    //    const response = await axios.get('http://localhost:5000/api/v1/auth/instagram');
+   //    //    window.location.href = response.data.authorizationUrl;
+   //    //  } catch (error) {
+   //    //    console.error('Error al obtener la URL de autorización de Instagram:', error.message);
+   //    //  }
+
+   //    // Redirigir al usuario a la página de autorización de Instagram
+   //    // const authorizationUrl = 'https://api.instagram.com/oauth/authorize?client_id=3547632535556841&redirect_uri=http://localhost:5173/&response_type=code';
+   //    // console.log(authorizationUrl);
+
+   //    // window.location.href = authorizationUrl;
+   // }
 
    const loginFacebook = async (e) => {
       e.preventDefault();
       try {
-        const res = await loginWidthFacebook();
-        console.log(res);
+        const response = await loginWidthFacebook();
+        if(!response){
+         return toast.warning('Fallo el login con facebook', {
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary',
+         })
+      }
+      console.log(response);
+
+      const res = await login({namesuser: response.user.email, token: response.user.uid, name: response.user.displayName, photo: response.user.photoURL, ismetodo: 'google'});
+
+      const { data, error } = res
+
+      console.log(error)
+
+      if (res.data.status === 200) {
+         const data = res.data.data
+
+         //  funcion que guarda en el localstorange
+         useSendLocalStorange('data', data);
+         toast.success('¡Éxito!', {
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary',
+         })
+
+         setTimeout(() => {
+            setEstado(estado + 1)
+            navigate('/home');
+         }, 2000)
+
+      } else if (error.data.status === 400) {
+
+        navigate('/');
+
+      } else {
+
+        navigate('/');
+
+      }
       } catch (error) {
         console.log(error.message);
       }
    }
+
+   useEffect(() => {
+      const rememberMeValue = localStorage.getItem('rememberMe');
+      if (rememberMeValue) {
+        setRememberMe(true);
+      }
+   }, []);
+
+   const handleRememberMeChange = (event) => {
+      const { checked } = event.target;
+      setRememberMe(checked);
+      const data = {
+         email: formData.username,
+         pass: formData.password
+      }
+      if (checked) {
+        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('rememberMeData', JSON.stringify(data));
+      } else {
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('rememberMeData');
+      }
+   };
+
 
   return (
    <Fragment>
@@ -190,18 +278,19 @@ const Login = ({setEstado, estado}) => {
                               <Col lg="12">
                                  <Form.Group className="form-group">
                                     <Form.Label htmlFor="username" className="">Email</Form.Label>
-                                    <Form.Control type="text" className="" id="email" aria-describedby="username" placeholder="Email" name='username' onChange={datosForm} />
+                                    <Form.Control type="text" className="" id="email" value={formData?.username} aria-describedby="username" placeholder="Email" name='username' onChange={datosForm} />
                                  </Form.Group >
                               </Col>
                               <Col lg="12" className="">
                                  <Form.Group className="form-group">
                                     <Form.Label htmlFor="password" className="">Password</Form.Label>
-                                    <Form.Control type="password" className="" id="password" aria-describedby="password" placeholder="Password" name='password' onChange={datosForm} />
+                                    <Form.Control type="password" className="" id="password" value={formData?.password} aria-describedby="password" placeholder="Password"  name='password' onChange={datosForm} />
                                  </Form.Group>
                               </Col>
                               <Col lg="12" className="d-flex justify-content-between">
                                  <Form.Check className="form-check mb-3">
-                                    <Form.Check.Input type="checkbox" id="customCheck1" />
+                                    <Form.Check.Input type="checkbox" id="customCheck1" checked={rememberMe}
+                                    onChange={handleRememberMeChange} />
                                     <Form.Check.Label htmlFor="customCheck1">Remember Me</Form.Check.Label>
                                  </Form.Check>
                                  <Link to="/forget">Forgot Password?</Link>
@@ -219,12 +308,12 @@ const Login = ({setEstado, estado}) => {
                                  <ListGroup.Item onClick={loginFacebook} as="li" className="border-0 pb-0">
                                     <a href="#"><Image src={facebook} alt="fb" /></a>
                                  </ListGroup.Item>
-                                 <ListGroup.Item as="li" className="border-0 pb-0">
+                                 {/* <ListGroup.Item onClick={loginWidthInstagram} as="li" className="border-0 pb-0">
                                     <a href="#"><Image src={instagram} alt="im" /></a>
-                                 </ListGroup.Item>
-                                 <ListGroup.Item as="li" className="border-0 pb-0">
+                                 </ListGroup.Item> */}
+                                 {/* <ListGroup.Item as="li" className="border-0 pb-0">
                                     <a href="#"><Image src={linkedin} alt="li" /></a>
-                                 </ListGroup.Item>
+                                 </ListGroup.Item> */}
                               </ListGroup>
                            </div>
                            <p className="mt-3 text-center">
