@@ -42,10 +42,10 @@ const Landing = ({role}) => {
         enlace1: data?.result?.parameters?.links?.enlace1,
         enlace2: data?.result?.parameters?.links?.enlace2,
         enlace3: data?.result?.parameters?.links?.enlace3,
-        ciudad: data?.result?.parameters?.links?.ciudad,
-        barrio: data?.result?.parameters?.links?.barrio,
-        direccion: data?.result?.parameters?.links?.direccion,
-        recomendacion_card: data?.result?.parameters?.links?.recomendacion_card
+        // ciudad: data?.result?.parameters?.links?.ciudad,
+        // barrio: data?.result?.parameters?.links?.barrio,
+        // direccion: data?.result?.parameters?.links?.direccion,
+        // recomendacion_card: data?.result?.parameters?.links?.recomendacion_card
         
     });
 
@@ -102,10 +102,10 @@ const Landing = ({role}) => {
             enlace1: data?.result?.parameters?.links?.enlace1 || '',
             enlace2: data?.result?.parameters?.links?.enlace2 || '',
             enlace3: data?.result?.parameters?.links?.enlace3 || '',
-            ciudad: data?.result?.parameters?.links?.ciudad || '',
-            barrio: data?.result?.parameters?.links?.barrio || '',
-            direccion: data?.result?.parameters?.links?.direccion || '',
-            recomendacion_card: data?.result?.parameters?.links?.recomendacion_card || ''
+            // ciudad: data?.result?.parameters?.links?.ciudad || '',
+            // barrio: data?.result?.parameters?.links?.barrio || '',
+            // direccion: data?.result?.parameters?.links?.direccion || '',
+            // recomendacion_card: data?.result?.parameters?.links?.recomendacion_card || ''
           }));
     }, [data])
 
@@ -165,10 +165,10 @@ const Landing = ({role}) => {
             { name: 'enlace1', url: datos?.enlace1 },
             { name: 'enlace2', url: datos?.enlace2 },
             { name: 'enlace3', url: datos?.enlace3 },
-            { name: 'ciudad', url: datos?.ciudad },
-            { name: 'barrio', url: datos?.barrio },
-            { name: 'direccion', url: datos?.direccion },
-            { name: 'recomendacion_card', url: datos?.recomendacion_card }
+            // { name: 'ciudad', url: datos?.ciudad },
+            // { name: 'barrio', url: datos?.barrio },
+            // { name: 'direccion', url: datos?.direccion },
+            // { name: 'recomendacion_card', url: datos?.recomendacion_card }
         ]
 
         const foto_landing = useGetLocalStorange('foto_landing');
@@ -208,6 +208,7 @@ const Landing = ({role}) => {
         return <div>Error: {error.message}</div>; // Manejo de error
     }
 
+    console.log(data);
 
   return (
     <Row>
@@ -382,7 +383,7 @@ const Landing = ({role}) => {
                                                 <input type="text" className="form-control" name="enlace3" value={datos?.enlace3} onChange={handleChange} placeholder="Ingresa un Enlace Adicional" />
                                             </div>
                                         </div>
-                                        <div className="col-md-6">
+                                        {/* <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Tu Ciudad de Entrega: *</label>
                                                 <select value={datos?.ciudad} name="ciudad" className="form-control" onChange={handleChange}>
@@ -392,20 +393,20 @@ const Landing = ({role}) => {
                                                     <option value="medellin">Medellin</option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div className="col-md-6">
+                                        </div> */}
+                                        {/* <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Barrio de Entrega</label>
                                                 <input type="text" className="form-control" name="barrio" value={datos?.barrio} onChange={handleChange} placeholder="Ingresa tu barrio" />
                                             </div>
-                                        </div>
-                                        <div className="col-md-6">
+                                        </div> */}
+                                        {/* <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Dirección de Entrega</label>
                                                 <input type="text" className="form-control" name="direccion" value={datos?.direccion} onChange={handleChange} placeholder="Ingresa tu Dirección" />
                                             </div>
-                                        </div>
-                                        <div className="col-md-6">
+                                        </div> */}
+                                        {/* <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Tu tarjeta tendrá de manera obligatoria el QR. Dinos qué deseas que aparezca en tu Tarjeta Impresa: *</label> 
                                                 <select name="recomendacion_card" value={datos?.recomendacion_card} onChange={handleChange} className="form-control">
@@ -415,7 +416,7 @@ const Landing = ({role}) => {
                                                     <option value="foto">Tu Foto (No es recomendable )</option>
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             {/* <fieldset className={`${show !== 'Account' ? 'd-block' : 'd-none'}`}> */}
