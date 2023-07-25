@@ -33,15 +33,16 @@ const Landing = ({role}) => {
         seo: data?.result?.url || '',
         foto: data?.result?.foto || useGetLocalStorange('foto_landing'),
         fondo: data?.result?.fondo|| useGetLocalStorange('fondo_landing'),
-        linkedin: data?.result?.parameters?.links?.linkedin,
-        instagram: data?.result?.parameters?.links?.instagram,
-        facebook: data?.result?.parameters?.links?.facebook,
-        twitter: data?.result?.parameters?.links?.twitter,
-        tiktok: data?.result?.parameters?.links?.tiktok,
-        youtube: data?.result?.parameters?.links?.youtube,
-        enlace1: data?.result?.parameters?.links?.enlace1,
-        enlace2: data?.result?.parameters?.links?.enlace2,
-        enlace3: data?.result?.parameters?.links?.enlace3,
+        linkedin: data?.result?.parameters?.links?.linkedin?.url,
+        instagram: data?.result?.parameters?.links?.instagram?.url,
+        facebook: data?.result?.parameters?.links?.facebook?.url,
+        twitter: data?.result?.parameters?.links?.twitter?.url,
+        tiktok: data?.result?.parameters?.links?.tiktok?.url,
+        youtube: data?.result?.parameters?.links?.youtube?.url,
+        whatsapp: data?.result?.parameters?.links?.whatsapp?.url || '',
+        enlace1: data?.result?.parameters?.links?.enlace1?.url,
+        enlace2: data?.result?.parameters?.links?.enlace2?.url,
+        enlace3: data?.result?.parameters?.links?.enlace3?.url,
         // ciudad: data?.result?.parameters?.links?.ciudad,
         // barrio: data?.result?.parameters?.links?.barrio,
         // direccion: data?.result?.parameters?.links?.direccion,
@@ -93,15 +94,16 @@ const Landing = ({role}) => {
             seo: data?.result?.url || '',
             foto: data?.result?.foto || useGetLocalStorange('foto_landing'),
             fondo: data?.result?.fondo || useGetLocalStorange('fondo_landing'),
-            linkedin: data?.result?.parameters?.links?.linkedin || '',
-            instagram: data?.result?.parameters?.links?.instagram || '',
-            facebook: data?.result?.parameters?.links?.facebook || '',
-            twitter: data?.result?.parameters?.links?.twitter || '',
-            tiktok: data?.result?.parameters?.links?.tiktok || '',
-            youtube: data?.result?.parameters?.links?.youtube || '',
-            enlace1: data?.result?.parameters?.links?.enlace1 || '',
-            enlace2: data?.result?.parameters?.links?.enlace2 || '',
-            enlace3: data?.result?.parameters?.links?.enlace3 || '',
+            linkedin: data?.result?.parameters?.links?.linkedin?.url || '',
+            instagram: data?.result?.parameters?.links?.instagram?.url || '',
+            facebook: data?.result?.parameters?.links?.facebook?.url || '',
+            twitter: data?.result?.parameters?.links?.twitter?.url || '',
+            tiktok: data?.result?.parameters?.links?.tiktok?.url || '',
+            youtube: data?.result?.parameters?.links?.youtube?.url || '',
+            whatsapp: data?.result?.parameters?.links?.whatsapp?.url || '',
+            enlace1: data?.result?.parameters?.links?.enlace1?.url || '',
+            enlace2: data?.result?.parameters?.links?.enlace2?.url || '',
+            enlace3: data?.result?.parameters?.links?.enlace3?.url || '',
             // ciudad: data?.result?.parameters?.links?.ciudad || '',
             // barrio: data?.result?.parameters?.links?.barrio || '',
             // direccion: data?.result?.parameters?.links?.direccion || '',
@@ -156,15 +158,16 @@ const Landing = ({role}) => {
         const {alias, url, seo, foto, fondo} = datos;
 
         const formArray = [
-            { name: 'linkedin', url: datos?.linkedin },
-            { name: 'instagram', url: datos?.instagram },
-            { name: 'facebook', url: datos?.facebook },
-            { name: 'twitter', url: datos?.twitter },
-            { name: 'tiktok', url: datos?.tiktok },
-            { name: 'youtube', url: datos?.youtube },
-            { name: 'enlace1', url: datos?.enlace1 },
-            { name: 'enlace2', url: datos?.enlace2 },
-            { name: 'enlace3', url: datos?.enlace3 },
+            { name: 'linkedin', url: datos?.linkedin, img: 'linkedin', color: '#0A66C2' },
+            { name: 'instagram', url: datos?.instagram, img: 'instagram', color: '#E4405F' },
+            { name: 'facebook', url: datos?.facebook, img: 'facebook', color: '#1877F2' },
+            { name: 'twitter', url: datos?.twitter, img: 'twitter', color: '#1DA1F2' },
+            { name: 'tiktok', url: datos?.tiktok, img: 'tiktok', color: '#000000' },
+            { name: 'youtube', url: datos?.youtube, img: 'youtube', color: '#ff0000' },
+            { name: 'whatsapp', url: datos?.whatsapp, img: 'whatsapp', color: '#25D366' },
+            { name: 'enlace1', url: datos?.enlace1, img: 'enlace1', color: '#8e44ad' },
+            { name: 'enlace2', url: datos?.enlace2, img: 'enlace2', color: '#8e44ad' },
+            { name: 'enlace3', url: datos?.enlace3, img: 'enlace3', color: '#8e44ad' },
             // { name: 'ciudad', url: datos?.ciudad },
             // { name: 'barrio', url: datos?.barrio },
             // { name: 'direccion', url: datos?.direccion },
@@ -175,7 +178,7 @@ const Landing = ({role}) => {
         const fondo_landing = useGetLocalStorange('fondo_landing');
 
         try {
-            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, foto: foto_landing || foto, fondo: fondo_landing || fondo_landing, parameter: formArray});
+            const res = await update_landing({id_landing: id || id_landing,alias, url, seo, foto: foto_landing || foto, fondo: fondo_landing || fondo, parameter: formArray});
 
             const { data, error } = res;
             
@@ -208,7 +211,7 @@ const Landing = ({role}) => {
         return <div>Error: {error.message}</div>; // Manejo de error
     }
 
-    console.log(data);
+    console.log(datos);
 
   return (
     <Row>
@@ -363,6 +366,12 @@ const Landing = ({role}) => {
                                             <div className="form-group">
                                                 <label className="form-label">Youtube</label>
                                                 <input type="text" className="form-control" name="youtube" value={datos?.youtube} onChange={handleChange} placeholder="Ingresa tu Cana de Youtube" />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Whatsapp</label>
+                                                <input type="text" className="form-control" name="whatsapp" value={datos?.whatsapp} onChange={handleChange} placeholder="Ingresa el enlace a tu whatsapp" />
                                             </div>
                                         </div>
                                         <div className="col-md-6">

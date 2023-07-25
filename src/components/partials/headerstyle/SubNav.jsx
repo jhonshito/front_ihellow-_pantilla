@@ -78,6 +78,8 @@ const SubNav = () => {
     localStorage.removeItem('data');
     localStorage.removeItem('idLanding');
     localStorage.removeItem('dataUserSelect');
+    localStorage.removeItem('fondo_landing');
+    localStorage.removeItem('foto_landing');
     // localStorage.clear();
     const local = useGetLocalStorange('data');
     if(!local) return navigate('/')

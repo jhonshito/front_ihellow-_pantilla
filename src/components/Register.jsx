@@ -193,6 +193,12 @@ const Register = () => {
             progressClassName: 'bg-primary'
          })
       break;
+      case !formData.password.length < 7:
+         toast.warning('El password debe de tener 7 o mas caracteres.', {
+            position: toast.POSITION.TOP_CENTER,
+            progressClassName: 'bg-primary'
+         })
+      break;
       case !confirmacion:
          toast.warning('El campo de la confirmación no puede estar vacio.', {
             position: toast.POSITION.TOP_CENTER,
